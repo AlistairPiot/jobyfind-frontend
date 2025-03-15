@@ -1,12 +1,22 @@
-# React + Vite
+# Frontend Projet Jobyfind
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.0-blue?style=for-the-badge&logo=tailwindcss)
+![Axios](https://img.shields.io/badge/Axios-1.3-blue?style=for-the-badge&logo=axios)
 
-Currently, two official plugins are available:
+## Prérequis
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Avant de commencer, assure-toi d'avoir installé :
 
-## Expanding the ESLint configuration
+-   [Node.js](https://nodejs.org/) (dernière version LTS recommandée)
+-   [npm](https://www.npmjs.com/) ou [yarn](https://yarnpkg.com/)
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Installation du projet
+
+Clone le repository et installe les dépendances :
+
+```bash
+git clone https://github.com/ton-utilisateur/ton-repo-react.git
+cd ton-repo-react
+npm install  # ou yarn install
+```
