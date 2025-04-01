@@ -1,8 +1,8 @@
 # Frontend Projet Jobyfind
 
 ![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
-![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.0-blue?style=for-the-badge&logo=tailwindcss)
-![Axios](https://img.shields.io/badge/Axios-1.3-blue?style=for-the-badge&logo=axios)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4.0.14-blue?style=for-the-badge&logo=tailwindcss)
+![Axios](https://img.shields.io/badge/Axios-1.8.3-blue?style=for-the-badge&logo=axios)
 
 ## Prérequis
 

@@ -13,7 +13,11 @@ const api = axios.create({
 export const getSkills = () =>
     api.get("/skills").then((res) => {
         console.log("Réponse API :", res.data);
-        return res.data.member || [];
+        return res.data || [];
     });
+
+// Inscription d'un utilisateur
+export const registerUser = (userData) =>
+    api.post("/register", userData).then((res) => res.data);
 
 export default api;

@@ -1,10 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import SkillTest from "./SkillTest.jsx";
+import SignUpForm from "./SignUpForm.jsx";
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
         {/* <App /> */}
-        <SkillTest />
+        {/* <SkillTest /> */}
+        <SignUpForm />
     </StrictMode>
 );
