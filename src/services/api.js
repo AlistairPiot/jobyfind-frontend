@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// L'URL de l'API, centralisée ici pour faciliter la gestion
 const API_URL = "http://localhost:8000/api";
 
 const api = axios.create({
@@ -18,7 +19,16 @@ export const getSkills = () =>
 
 // Inscription d'un utilisateur
 export const registerUser = (userData) =>
-    api.post("/register", userData).then((res) => res.data);
+    api
+        .post("/register", userData)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de l'inscription:",
+                error.response || error
+            );
+            throw error; // Lancer l'erreur pour être capturée par handleSubmit
+        });
 
 // Fonction de connexion utilisateur
 export const loginUser = (userData) =>

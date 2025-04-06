@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/api"; // Importer la fonction loginUser depuis api.js
 
 function LoginForm() {
     const [email, setEmail] = useState("");
@@ -11,13 +12,19 @@ function LoginForm() {
         event.preventDefault();
 
         try {
-            // Simuler une connexion réussie
-            console.log("User logged in:", { email, password });
-            // Rediriger l'utilisateur vers la page d'accueil ou un dashboard
-            navigate("/");
+            const response = await loginUser({ email, password }); // Appel de la fonction loginUser
+
+            if (response) {
+                // Connexion réussie : redirection vers la page d'accueil ou dashboard
+                console.log("User logged in:", response);
+                navigate("/"); // Redirection vers la page d'accueil après une connexion réussie
+            } else {
+                // Affichage du message d'erreur en cas de mauvaise connexion
+                setError("Invalid credentials. Please try again.");
+            }
         } catch (err) {
             console.error("Erreur lors de la connexion :", err);
-            setError("Invalid credentials. Please try again.");
+            setError("An error occurred. Please try again.");
         }
     };
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../services/api";
 
 function SignUpForm() {
     const [email, setEmail] = useState("");
@@ -18,8 +19,8 @@ function SignUpForm() {
 
         try {
             const userData = { email, password, role };
-            // Simuler une inscription réussie, tu peux ajouter une fonction d'API ici
-            console.log("User registered:", userData);
+            const response = await registerUser(userData);
+            console.log("User registered:", response);
             // Rediriger l'utilisateur vers la page de connexion
             navigate("/login");
         } catch (err) {
