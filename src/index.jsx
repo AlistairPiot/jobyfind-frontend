@@ -1,11 +1,9 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import SignUpForm from "./SignUpForm.jsx";
+import ReactDOM from "react-dom/client";
+import App from "./App"; // App.js qui va contenir le routage
 
-createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
     <StrictMode>
-        {/* <App /> */}
-        {/* <SkillTest /> */}
-        <SignUpForm />
+        <App />
     </StrictMode>
 );

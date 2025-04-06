@@ -20,4 +20,8 @@ export const getSkills = () =>
 export const registerUser = (userData) =>
     api.post("/register", userData).then((res) => res.data);
 
+// Fonction de connexion utilisateur
+export const loginUser = (userData) =>
+    api.post("/login", userData).then((res) => res.data);
+
 export default api;

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { registerUser } from "./services/api"; // Import de la nouvelle fonction
+import { useNavigate } from "react-router-dom";
 
 function SignUpForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState(""); // School, Company, Freelance
     const [error, setError] = useState(null);
+    const navigate = useNavigate(); // Hook pour la redirection
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -17,9 +18,10 @@ function SignUpForm() {
 
         try {
             const userData = { email, password, role };
-            const response = await registerUser(userData); // Utilisation de registerUser
-            console.log("Inscription réussie :", response);
-            // Rediriger l'utilisateur ou afficher un message de succès
+            // Simuler une inscription réussie, tu peux ajouter une fonction d'API ici
+            console.log("User registered:", userData);
+            // Rediriger l'utilisateur vers la page de connexion
+            navigate("/login");
         } catch (err) {
             console.error("Erreur lors de l'inscription :", err);
             setError("An error occurred. Please try again.");
