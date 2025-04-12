@@ -1,25 +1,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/api"; // Importer la fonction loginUser depuis api.js
+import { useAuth } from "../context/AuthContext"; // Import du hook pour utiliser l'authentification
+import { loginUser } from "../services/api";
 
 function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
-    const navigate = useNavigate(); // Hook pour la redirection
+    const navigate = useNavigate();
+    const { login } = useAuth(); // Utilisation du hook de contexte
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const response = await loginUser({ email, password }); // Appel de la fonction loginUser
+            const response = await loginUser({ email, password });
 
-            if (response) {
-                // Connexion réussie : redirection vers la page d'accueil ou dashboard
-                console.log("User logged in:", response);
-                navigate("/"); // Redirection vers la page d'accueil après une connexion réussie
+            if (response && response.token) {
+                // Connexion réussie : appel du login dans le contexte avec le token
+                login(response.token);
+                navigate("/dashboard"); // Redirection vers le dashboard après connexion
             } else {
-                // Affichage du message d'erreur en cas de mauvaise connexion
                 setError("Invalid credentials. Please try again.");
             }
         } catch (err) {

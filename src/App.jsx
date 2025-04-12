@@ -1,20 +1,14 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Nav from "./components/Nav";
-import Home from "./pages/Home";
-import LoginForm from "./pages/LoginForm";
-import SignUpForm from "./pages/SignUpForm";
+import React from "react";
+import { BrowserRouter } from "react-router-dom"; // Utilisation de BrowserRouter ici
+import Nav from "./components/Nav"; // Importation de Nav pour la navigation
+import Root from "./router/root"; // Importation de Root pour gérer les routes
 
 function App() {
     return (
-        <Router>
-            {/* La barre de navigation est disponible sur toutes les pages */}
+        <BrowserRouter>
             <Nav />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<SignUpForm />} />
-                <Route path="/login" element={<LoginForm />} />
-            </Routes>
-        </Router>
+            <Root /> {/* Utilisation de Root pour gérer les routes */}
+        </BrowserRouter>
     );
 }
 

@@ -1,14 +1,30 @@
-import { Route, Routes } from "react-router-dom";
-import Home from "../pages/Home"; // Import de la page d'accueil
-import LoginForm from "../pages/LoginForm"; // Import du formulaire de connexion
-import SignUpForm from "../pages/SignUpForm"; // Import du formulaire d'inscription
+import { Navigate, Route, Routes } from "react-router-dom"; // Vérifie que tu utilises bien la v6 de react-router
+import { useAuth } from "../context/AuthContext"; // Pour vérifier l'authentification
+import Dashboard from "../pages/Dashboard"; // Import du Dashboard
+import Home from "../pages/Home";
+import LoginForm from "../pages/LoginForm";
+import SignUpForm from "../pages/SignUpForm";
 
 function Root() {
+    const { isAuthenticated } = useAuth(); // Vérifie l'état d'authentification
+
     return (
         <Routes>
-            <Route path="/" element={<Home />} />
+            {/* Si l'utilisateur est authentifié, redirige-le vers le Dashboard au lieu de la Home */}
+            <Route
+                path="/"
+                element={
+                    isAuthenticated ? <Navigate to="/dashboard" /> : <Home />
+                }
+            />
             <Route path="/signup" element={<SignUpForm />} />
             <Route path="/login" element={<LoginForm />} />
+            <Route
+                path="/dashboard"
+                element={
+                    isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
+                }
+            />
         </Routes>
     );
 }
