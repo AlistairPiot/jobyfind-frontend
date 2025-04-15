@@ -16,9 +16,9 @@ function LoginForm() {
         try {
             const response = await loginUser({ email, password });
 
-            if (response && response.token) {
+            if (response && response.token && response.roles) {
                 // Connexion réussie : appel du login dans le contexte avec le token
-                login(response.token);
+                login(response.token, response.roles);
                 navigate("/dashboard"); // Redirection vers le dashboard après connexion
             } else {
                 setError("Invalid credentials. Please try again.");

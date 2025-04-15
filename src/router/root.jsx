@@ -1,16 +1,19 @@
-import { Navigate, Route, Routes } from "react-router-dom"; // Vérifie que tu utilises bien la v6 de react-router
-import { useAuth } from "../context/AuthContext"; // Pour vérifier l'authentification
-import Dashboard from "../pages/Dashboard"; // Import du Dashboard
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+import DashboardCompany from "../pages/DashboardCompany";
+import DashboardFreelance from "../pages/DashboardFreelance";
+import DashboardSchool from "../pages/DashboardSchool";
 import Home from "../pages/Home";
 import LoginForm from "../pages/LoginForm";
 import SignUpForm from "../pages/SignUpForm";
+import DashboardRouter from "./../router/DashboardRoot";
 
 function Root() {
-    const { isAuthenticated } = useAuth(); // Vérifie l'état d'authentification
+    const { isAuthenticated } = useAuth();
 
     return (
         <Routes>
-            {/* Si l'utilisateur est authentifié, redirige-le vers le Dashboard au lieu de la Home */}
             <Route
                 path="/"
                 element={
@@ -19,10 +22,48 @@ function Root() {
             />
             <Route path="/signup" element={<SignUpForm />} />
             <Route path="/login" element={<LoginForm />} />
+
+            {/* Route centrale qui redirige vers le bon dashboard */}
             <Route
                 path="/dashboard"
                 element={
-                    isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
+                    isAuthenticated ? (
+                        <DashboardRouter />
+                    ) : (
+                        <Navigate to="/login" />
+                    )
+                }
+            />
+
+            {/* Dashboards spécifiques */}
+            <Route
+                path="/dashboard/company"
+                element={
+                    isAuthenticated ? (
+                        <DashboardCompany />
+                    ) : (
+                        <Navigate to="/login" />
+                    )
+                }
+            />
+            <Route
+                path="/dashboard/school"
+                element={
+                    isAuthenticated ? (
+                        <DashboardSchool />
+                    ) : (
+                        <Navigate to="/login" />
+                    )
+                }
+            />
+            <Route
+                path="/dashboard/freelance"
+                element={
+                    isAuthenticated ? (
+                        <DashboardFreelance />
+                    ) : (
+                        <Navigate to="/login" />
+                    )
                 }
             />
         </Routes>

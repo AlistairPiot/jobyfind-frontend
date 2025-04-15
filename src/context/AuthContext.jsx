@@ -5,33 +5,36 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
-        // Vérifie si un token existe dans localStorage lors du chargement de la page
         const token = localStorage.getItem("authToken");
+        const role = localStorage.getItem("userRole");
 
-        // Si le token est valide (présent et non expiré), l'utilisateur est authentifié
-        if (token) {
+        if (token && role) {
             setIsAuthenticated(true);
+            setUserRole(role);
         }
     }, []);
 
-    const login = (token) => {
-        if (token) {
-            // On sauvegarde le token dans localStorage uniquement lors du login
-            localStorage.setItem("authToken", token);
-            setIsAuthenticated(true);
-        }
+    const login = (token, roles) => {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userRole", roles[0]); // On prend le premier rôle
+        setIsAuthenticated(true);
+        setUserRole(roles[0]);
     };
 
     const logout = () => {
-        // Supprime le token du localStorage lors de la déconnexion
         localStorage.removeItem("authToken");
+        localStorage.removeItem("userRole");
         setIsAuthenticated(false);
+        setUserRole(null);
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider
+            value={{ isAuthenticated, userRole, login, logout }}
+        >
             {children}
         </AuthContext.Provider>
     );
