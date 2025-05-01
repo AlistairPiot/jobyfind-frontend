@@ -87,3 +87,31 @@ export const getTypes = () =>
             );
             return [];
         });
+
+// ✅ Récupération des missions d'un user
+export const getMissionsByUser = (userId) =>
+    api
+        .get(`/missions?createdBy.id=${userId}`)
+        .then((res) => {
+            console.log(res.data); // Ajoute cette ligne pour inspecter la réponse
+            return res.data["member"] || [];
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des missions:",
+                error
+            );
+            return [];
+        });
+
+export const getUserById = (userId) =>
+    api
+        .get(`/users/${userId}`)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération de l'utilisateur:",
+                error
+            );
+            return null;
+        });
