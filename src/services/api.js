@@ -61,3 +61,29 @@ export const loginUser = (userData) =>
     api.post("/login", userData).then((res) => res.data);
 
 export default api;
+
+// ✅ Création d'une mission
+export const createMission = (missionData) =>
+    api
+        .post("/missions", missionData)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la création de la mission:",
+                error.response || error
+            );
+            throw error;
+        });
+
+// ✅ Récupération des types de contrat (CDI, CDD, etc.)
+export const getTypes = () =>
+    api
+        .get("/types")
+        .then((res) => res.data["member"] || res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des types:",
+                error.response || error
+            );
+            return [];
+        });
