@@ -115,3 +115,16 @@ export const getUserById = (userId) =>
             );
             return null;
         });
+
+// Supprimer une mission
+export const deleteMission = (missionId) => {
+    return api
+        .delete(`/missions/${missionId}`)
+        .then(() => {
+            return true;
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la suppression :", error);
+            throw error;
+        });
+};

@@ -112,11 +112,14 @@ function CreateMissionForm() {
                     required
                 >
                     <option value="">-- Sélectionnez un type --</option>
-                    {types.map((type) => (
-                        <option key={type["@id"]} value={type["@id"]}>
-                            {type.name}
-                        </option>
-                    ))}
+                    {types.map((type) => {
+                        console.log("Type individuel :", type);
+                        return (
+                            <option key={type["@id"]} value={type["@id"]}>
+                                {type.name}
+                            </option>
+                        );
+                    })}
                 </select>
             </div>
 

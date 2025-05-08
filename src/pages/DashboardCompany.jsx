@@ -1,46 +1,63 @@
 import React, { useEffect, useState } from "react";
-import CreateMissionForm from "./../components/CreateMissionForm";
-import { getMissionsByUser, getUserById } from "./../services/api";
+import {
+    deleteMission,
+    getMissionsByUser,
+    getUserById,
+} from "./../services/api";
 
 function DashboardCompany() {
     const [missions, setMissions] = useState([]);
     const [users, setUsers] = useState({});
 
     useEffect(() => {
+        fetchMissions();
+    }, []);
+
+    const fetchMissions = async () => {
         const userId = localStorage.getItem("userId");
         if (userId) {
-            getMissionsByUser(userId).then((missionsData) => {
-                setMissions(missionsData);
-                // Récupérer les informations de chaque utilisateur associé aux missions
-                missionsData.forEach((mission) => {
-                    if (mission.user && mission.user.id) {
-                        // Vérifie que mission.user.id existe
-                        getUserById(mission.user.id).then((userData) => {
-                            setUsers((prevUsers) => ({
-                                ...prevUsers,
-                                [mission.user.id]: userData, // Stocker l'email de l'utilisateur dans le state
-                            }));
-                        });
-                    } else {
-                        console.log(
-                            `Utilisateur non trouvé pour la mission ${mission.id}`
-                        );
-                    }
-                });
+            const missionsData = await getMissionsByUser(userId);
+            setMissions(missionsData);
+
+            // Chargement des utilisateurs associés aux missions
+            missionsData.forEach((mission) => {
+                if (mission.user?.id) {
+                    getUserById(mission.user.id).then((userData) => {
+                        setUsers((prevUsers) => ({
+                            ...prevUsers,
+                            [mission.user.id]: userData,
+                        }));
+                    });
+                }
             });
         }
-    }, []);
+    };
+
+    const handleDelete = async (missionId) => {
+        const confirmed = window.confirm(
+            "Voulez-vous vraiment supprimer cette mission ?"
+        );
+        if (!confirmed) return;
+
+        try {
+            // Suppression de la mission via l'API
+            await deleteMission(missionId);
+
+            // Mise à jour de l'état local pour retirer la mission supprimée
+            setMissions(missions.filter((mission) => mission.id !== missionId));
+
+            alert("Mission supprimée avec succès !");
+        } catch (error) {
+            console.error("Erreur lors de la suppression :", error);
+            alert("Erreur lors de la suppression de la mission.");
+        }
+    };
 
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">
                 Bienvenue sur le dashboard Entreprise
             </h1>
-
-            <h2 className="text-xl font-semibold mb-2">
-                Créer une nouvelle mission
-            </h2>
-            <CreateMissionForm />
 
             <h2 className="text-xl font-semibold mt-6 mb-2">
                 Vos missions postées
@@ -54,6 +71,7 @@ function DashboardCompany() {
                             key={mission.id}
                             className="border p-4 rounded shadow-sm bg-white"
                         >
+                            {/* Affichage de la mission */}
                             <h3 className="font-bold text-lg">
                                 {mission.name}
                             </h3>
@@ -63,9 +81,16 @@ function DashboardCompany() {
                             <p className="text-sm text-gray-600">
                                 Créée par :{" "}
                                 {users[mission.user.id]?.email ||
-                                    users[mission.user.id]?.id ||
                                     "Utilisateur inconnu"}
                             </p>
+                            <div className="mt-2 space-x-2">
+                                <button
+                                    onClick={() => handleDelete(mission.id)}
+                                    className="bg-red-500 text-white px-3 py-1 rounded"
+                                >
+                                    Supprimer
+                                </button>
+                            </div>
                         </li>
                     ))}
                 </ul>
