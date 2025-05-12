@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
     deleteMission,
     getMissionsByUser,
@@ -16,20 +17,40 @@ function DashboardCompany() {
     const fetchMissions = async () => {
         const userId = localStorage.getItem("userId");
         if (userId) {
-            const missionsData = await getMissionsByUser(userId);
-            setMissions(missionsData);
+            try {
+                const missionsData = await getMissionsByUser(userId);
+                setMissions(missionsData);
 
-            // Chargement des utilisateurs associés aux missions
-            missionsData.forEach((mission) => {
-                if (mission.user?.id) {
-                    getUserById(mission.user.id).then((userData) => {
-                        setUsers((prevUsers) => ({
-                            ...prevUsers,
-                            [mission.user.id]: userData,
-                        }));
-                    });
-                }
-            });
+                // Chargement des utilisateurs associés aux missions
+                const userPromises = missionsData.map((mission) => {
+                    if (mission.user && mission.user.id) {
+                        // Vérifie que 'user' et 'id' existent
+                        return getUserById(mission.user.id).then(
+                            (userData) => ({
+                                userId: mission.user.id,
+                                userData,
+                            })
+                        );
+                    }
+                    return null;
+                });
+
+                // Attendre que tous les utilisateurs soient chargés avant de mettre à jour l'état
+                const userResults = await Promise.all(userPromises);
+                const newUsers = userResults.reduce((acc, result) => {
+                    if (result) {
+                        acc[result.userId] = result.userData;
+                    }
+                    return acc;
+                }, {});
+
+                setUsers(newUsers);
+            } catch (error) {
+                console.error(
+                    "Erreur lors de la récupération des missions et utilisateurs",
+                    error
+                );
+            }
         }
     };
 
@@ -58,7 +79,14 @@ function DashboardCompany() {
             <h1 className="text-2xl font-bold mb-4">
                 Bienvenue sur le dashboard Entreprise
             </h1>
-
+            <div className="mb-4">
+                <Link
+                    to="/create-mission"
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                    + Ajouter une mission
+                </Link>
+            </div>
             <h2 className="text-xl font-semibold mt-6 mb-2">
                 Vos missions postées
             </h2>

@@ -1,13 +1,14 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import CreateMission from "../pages/CreateMission";
 import DashboardCompany from "../pages/DashboardCompany";
 import DashboardFreelance from "../pages/DashboardFreelance";
 import DashboardSchool from "../pages/DashboardSchool";
 import Home from "../pages/Home";
 import LoginForm from "../pages/LoginForm";
 import SignUpForm from "../pages/SignUpForm";
-import DashboardRouter from "./../router/DashboardRoot";
+import DashboardRouter from "../router/DashboardRoot";
 
 function Root() {
     const { isAuthenticated } = useAuth();
@@ -61,6 +62,18 @@ function Root() {
                 element={
                     isAuthenticated ? (
                         <DashboardFreelance />
+                    ) : (
+                        <Navigate to="/login" />
+                    )
+                }
+            />
+
+            {/* Nouvelle route ajoutée */}
+            <Route
+                path="/create-mission"
+                element={
+                    isAuthenticated ? (
+                        <CreateMission />
                     ) : (
                         <Navigate to="/login" />
                     )

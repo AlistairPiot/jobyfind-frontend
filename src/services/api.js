@@ -128,3 +128,13 @@ export const deleteMission = (missionId) => {
             throw error;
         });
 };
+
+export const getMissionById = async (id) => {
+    const response = await axios.get(`/api/missions/${id}`);
+    return response.data;
+};
+
+export const updateMission = async (id, missionData) => {
+    const response = await axios.put(`/api/missions/${id}`, missionData);
+    return response.data;
+};

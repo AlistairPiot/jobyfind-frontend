@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "./../context/AuthContext"; // Assure-toi que tu as bien importé useAuth
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./../context/AuthContext";
 import { createMission, getTypes } from "./../services/api";
 
 function CreateMissionForm() {
@@ -7,14 +8,17 @@ function CreateMissionForm() {
     const [typeId, setTypeId] = useState("");
     const [types, setTypes] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { isAuthenticated, userId, userRole } = useAuth(); // Utilisation du hook correctement
+    const [description, setDescription] = useState("");
+    const { isAuthenticated, userId, userRole } = useAuth();
+
+    const navigate = useNavigate(); // 👈 Initialisation du hook de navigation
 
     useEffect(() => {
         const loadTypes = async () => {
             try {
                 const data = await getTypes();
-                console.log("Types récupérés:", data); // Vérifie les données dans la console
-                setTypes(data); // On assigne directement `data` ici, car il s'agit de la liste
+                console.log("Types récupérés:", data);
+                setTypes(data);
             } catch (error) {
                 console.error("Erreur lors du chargement des types:", error);
             } finally {
@@ -28,55 +32,33 @@ function CreateMissionForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Vérification si l'utilisateur est authentifié
         if (!isAuthenticated) {
-            console.error("Utilisateur non connecté");
             alert("Veuillez vous connecter avant de soumettre la mission.");
             return;
         }
 
-        // Affiche le rôle utilisateur pour vérifier la valeur
-        console.log("Rôle utilisateur:", userRole);
-
-        // Vérification si l'utilisateur est une entreprise
         if (userRole !== "ROLE_COMPANY") {
-            console.error("Rôle utilisateur non autorisé");
             alert("Seules les entreprises peuvent créer des missions.");
             return;
         }
 
-        // Affiche l'objet `userId` pour vérifier son contenu
-        console.log("Utilisateur connecté:", userId);
-
-        // Vérifie si l'utilisateur a un ID avant de créer la mission
         if (!userId) {
-            console.error("Utilisateur non valide");
             alert("Utilisateur non valide.");
             return;
         }
 
         try {
-            // Créer une mission avec les données fournies
-            const response = await createMission({
+            await createMission({
                 name,
-                user: `/api/users/${userId}`, // Utilise l'ID de l'utilisateur, pas son rôle
-                type: typeId, // IRI déjà en valeur de select
+                description,
+                user: `/api/users/${userId}`,
+                type: typeId,
             });
 
-            console.log("Mission créée avec succès:", response); // Affiche la réponse de l'API dans la console
             alert("Mission créée avec succès !");
-            setName("");
-            setTypeId("");
+            navigate("/dashboard/company"); // ✅ Redirection après succès
         } catch (error) {
             if (error.response) {
-                console.error(
-                    "Erreur lors de la création de la mission:",
-                    error.response.data
-                );
-                console.error("Statut:", error.response.status);
-                console.error("Headers:", error.response.headers);
-
-                // Affiche les erreurs spécifiques renvoyées par l'API
                 const errorDetails =
                     error.response.data["hydra:description"] ||
                     "Erreur inconnue";
@@ -84,7 +66,6 @@ function CreateMissionForm() {
                     `Erreur lors de la création de la mission: ${errorDetails}`
                 );
             } else {
-                console.error("Erreur inconnue:", error);
                 alert("Erreur inconnue lors de la création de la mission.");
             }
         }
@@ -103,7 +84,14 @@ function CreateMissionForm() {
                     required
                 />
             </div>
-
+            <div>
+                <label>Description :</label>
+                <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                />
+            </div>
             <div>
                 <label>Type :</label>
                 <select
@@ -112,14 +100,11 @@ function CreateMissionForm() {
                     required
                 >
                     <option value="">-- Sélectionnez un type --</option>
-                    {types.map((type) => {
-                        console.log("Type individuel :", type);
-                        return (
-                            <option key={type["@id"]} value={type["@id"]}>
-                                {type.name}
-                            </option>
-                        );
-                    })}
+                    {types.map((type) => (
+                        <option key={type["@id"]} value={type["@id"]}>
+                            {type.name}
+                        </option>
+                    ))}
                 </select>
             </div>
 
