@@ -138,3 +138,18 @@ export const updateMission = async (id, missionData) => {
     const response = await axios.put(`/api/missions/${id}`, missionData);
     return response.data;
 };
+
+// ✅ Récupération de toutes les missions
+export const getAllMissions = () =>
+    api
+        .get("/missions")
+        .then((res) => {
+            return res.data["member"] || [];
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des missions:",
+                error
+            );
+            return [];
+        });
