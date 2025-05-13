@@ -153,3 +153,53 @@ export const getAllMissions = () =>
             );
             return [];
         });
+
+// ✅ Création d'une candidature
+export const createJobApplication = (applicationData) =>
+    api
+        .post("/job_applications", {
+            ...applicationData,
+            status: "PENDING",
+            DateApplied: new Date().toISOString(),
+        })
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la création de la candidature:",
+                error.response || error
+            );
+            throw error;
+        });
+
+// ✅ Récupération des candidatures d'un utilisateur
+export const getUserApplications = (userId) =>
+    api
+        .get(`/job_applications?user.id=${userId}`)
+        .then((res) => {
+            return res.data["member"] || [];
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des candidatures:",
+                error
+            );
+            return [];
+        });
+
+// ✅ Récupération des candidatures pour une mission spécifique
+export const getMissionApplications = (missionId) =>
+    api
+        .get(
+            `/job_applications?missions.id=${missionId}&groups[]=job_application:read&groups[]=user:read`
+        )
+        .then((res) => {
+            console.log("Réponse API complète:", res.data);
+            return res.data["member"] || [];
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des candidatures de la mission:",
+                error
+            );
+            return [];
+        });

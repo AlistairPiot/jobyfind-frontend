@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-    deleteMission,
-    getMissionsByUser,
-    getUserById,
-} from "./../services/api";
+import ManageCompanyMissions from "../components/ManageCompanyMissions";
+import { deleteMission, getMissionsByUser, getUserById } from "../services/api";
 
 function DashboardCompany() {
     const [missions, setMissions] = useState([]);
     const [users, setUsers] = useState({});
+    const [showManageMissions, setShowManageMissions] = useState(false);
 
     useEffect(() => {
         fetchMissions();
@@ -19,6 +17,7 @@ function DashboardCompany() {
         if (userId) {
             try {
                 const missionsData = await getMissionsByUser(userId);
+                console.log("Missions récupérées:", missionsData);
                 setMissions(missionsData);
 
                 // Chargement des utilisateurs associés aux missions
@@ -74,11 +73,25 @@ function DashboardCompany() {
         }
     };
 
+    const handleShowManageMissions = () => {
+        console.log("Ouverture du modal de gestion des missions");
+        console.log("Missions disponibles:", missions);
+        setShowManageMissions(true);
+    };
+
     return (
         <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">
-                Bienvenue sur le dashboard Entreprise
-            </h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold">
+                    Bienvenue sur le dashboard Entreprise
+                </h1>
+                <button
+                    onClick={handleShowManageMissions}
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                >
+                    Gérer mes missions
+                </button>
+            </div>
             <div className="mb-4">
                 <Link
                     to="/create-mission"
@@ -122,6 +135,16 @@ function DashboardCompany() {
                         </li>
                     ))}
                 </ul>
+            )}
+
+            {showManageMissions && (
+                <ManageCompanyMissions
+                    missions={missions}
+                    onClose={() => {
+                        console.log("Fermeture du modal");
+                        setShowManageMissions(false);
+                    }}
+                />
             )}
         </div>
     );
