@@ -1,13 +1,24 @@
 import React from "react";
-import { BrowserRouter } from "react-router-dom"; // Utilisation de BrowserRouter ici
-import Nav from "./components/Nav"; // Importation de Nav pour la navigation
-import Root from "./router/root"; // Importation de Root pour gérer les routes
+import { BrowserRouter } from "react-router-dom";
+import Nav from "./components/Nav";
+import Root from "./router/root";
 
 function App() {
     return (
         <BrowserRouter>
-            <Nav />
-            <Root /> {/* Utilisation de Root pour gérer les routes */}
+            <div className="flex flex-col min-h-screen bg-gray-50">
+                <Nav />
+                <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
+                    <div className="w-full">
+                        <Root />
+                    </div>
+                </main>
+                <footer className="py-6 bg-gray-100 shadow-inner">
+                    <div className="text-center text-gray-600 text-sm">
+                        <p>© 2024 Jobyfind - Tous droits réservés</p>
+                    </div>
+                </footer>
+            </div>
         </BrowserRouter>
     );
 }

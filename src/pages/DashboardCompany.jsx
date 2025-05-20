@@ -7,12 +7,14 @@ function DashboardCompany() {
     const [missions, setMissions] = useState([]);
     const [users, setUsers] = useState({});
     const [showManageMissions, setShowManageMissions] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchMissions();
     }, []);
 
     const fetchMissions = async () => {
+        setLoading(true);
         const userId = localStorage.getItem("userId");
         if (userId) {
             try {
@@ -49,7 +51,11 @@ function DashboardCompany() {
                     "Erreur lors de la récupération des missions et utilisateurs",
                     error
                 );
+            } finally {
+                setLoading(false);
             }
+        } else {
+            setLoading(false);
         }
     };
 
@@ -80,62 +86,89 @@ function DashboardCompany() {
     };
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">
-                    Bienvenue sur le dashboard Entreprise
+        <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-blue-800 mb-6">
+                    Dashboard Entreprise
                 </h1>
-                <button
-                    onClick={handleShowManageMissions}
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                >
-                    Gérer mes missions
-                </button>
+                <div className="flex flex-wrap justify-center gap-4">
+                    <Link
+                        to="/create-mission"
+                        className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-md"
+                    >
+                        Ajouter une mission
+                    </Link>
+                    <button
+                        onClick={handleShowManageMissions}
+                        className="px-6 py-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors shadow-md"
+                    >
+                        Gérer mes missions
+                    </button>
+                </div>
             </div>
-            <div className="mb-4">
-                <Link
-                    to="/create-mission"
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                    + Ajouter une mission
-                </Link>
-            </div>
-            <h2 className="text-xl font-semibold mt-6 mb-2">
-                Vos missions postées
-            </h2>
-            {missions.length === 0 ? (
-                <p>Aucune mission trouvée.</p>
-            ) : (
-                <ul className="space-y-2">
-                    {missions.map((mission) => (
-                        <li
-                            key={mission.id}
-                            className="border p-4 rounded shadow-sm bg-white"
+
+            <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-semibold mb-6 border-b pb-2 text-center">
+                    Vos missions publiées
+                </h2>
+
+                {loading ? (
+                    <div className="flex justify-center items-center h-40">
+                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600"></div>
+                        <p className="ml-4 text-gray-600">Chargement...</p>
+                    </div>
+                ) : missions.length === 0 ? (
+                    <div className="text-center py-8 bg-gray-50 rounded-lg">
+                        <p className="text-gray-600 mb-4">
+                            Vous n'avez pas encore publié de missions.
+                        </p>
+                        <Link
+                            to="/create-mission"
+                            className="text-blue-600 hover:underline"
                         >
-                            {/* Affichage de la mission */}
-                            <h3 className="font-bold text-lg">
-                                {mission.name}
-                            </h3>
-                            <p className="text-sm text-gray-700">
-                                Type : {mission.type?.name || "Non spécifié"}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                                Créée par :{" "}
-                                {users[mission.user.id]?.email ||
-                                    "Utilisateur inconnu"}
-                            </p>
-                            <div className="mt-2 space-x-2">
-                                <button
-                                    onClick={() => handleDelete(mission.id)}
-                                    className="bg-red-500 text-white px-3 py-1 rounded"
-                                >
-                                    Supprimer
-                                </button>
+                            Créer votre première mission
+                        </Link>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {missions.map((mission) => (
+                            <div
+                                key={mission.id}
+                                className="border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow"
+                            >
+                                <div className="h-2 bg-blue-600"></div>
+                                <div className="p-5 flex-grow">
+                                    <h3 className="font-bold text-lg text-gray-800 mb-2 text-center">
+                                        {mission.name}
+                                    </h3>
+                                    <div className="flex justify-center mb-3">
+                                        <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full">
+                                            {mission.type?.name ||
+                                                "Non spécifié"}
+                                        </span>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                                        {mission.description}
+                                    </p>
+                                    <p className="text-xs text-gray-500 mb-2 text-center">
+                                        Créée par :{" "}
+                                        {users[mission.user.id]?.email ||
+                                            "Utilisateur inconnu"}
+                                    </p>
+                                </div>
+                                <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex justify-center">
+                                    <button
+                                        onClick={() => handleDelete(mission.id)}
+                                        className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-1.5 rounded-md transition-colors"
+                                    >
+                                        Supprimer
+                                    </button>
+                                </div>
                             </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {showManageMissions && (
                 <ManageCompanyMissions

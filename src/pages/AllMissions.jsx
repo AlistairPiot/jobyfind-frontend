@@ -1,22 +1,22 @@
 // src/pages/AllMissions.jsx
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getAllMissions } from "../services/api";
 
 function AllMissions() {
     const [missions, setMissions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchMissions = async () => {
             try {
                 const data = await getAllMissions();
                 setMissions(data);
-            } catch (error) {
-                console.error(
-                    "Erreur lors du chargement des missions :",
-                    error
-                );
-            } finally {
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching missions:", err);
+                setError("Impossible de charger les missions");
                 setLoading(false);
             }
         };
@@ -24,30 +24,63 @@ function AllMissions() {
         fetchMissions();
     }, []);
 
-    if (loading) return <p>Chargement des missions...</p>;
+    if (loading) {
+        return (
+            <div>
+                <div></div>
+                <p>Chargement des missions...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div>
+                <h1>Toutes les missions</h1>
+                <div>
+                    <p>{error}</p>
+                    <Link to="/">Retour à l'accueil</Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Toutes les missions</h1>
+        <div>
+            <div>
+                <h1>Découvrez toutes les missions disponibles</h1>
+            </div>
+
             {missions.length === 0 ? (
-                <p>Aucune mission disponible.</p>
+                <div>
+                    <p>
+                        Aucune mission disponible pour le moment. Revenez plus
+                        tard !
+                    </p>
+                </div>
             ) : (
-                <ul className="space-y-4">
-                    {missions.map((mission) => (
-                        <li
-                            key={mission.id}
-                            className="border p-4 rounded shadow-sm bg-white"
-                        >
-                            <h2 className="text-lg font-bold">
-                                {mission.name}
-                            </h2>
-                            <p>{mission.description}</p>
-                            <p className="text-sm text-gray-600">
-                                Type : {mission.type?.name || "Non spécifié"}
-                            </p>
-                        </li>
-                    ))}
-                </ul>
+                <div>
+                    <div>
+                        {missions.map((mission) => (
+                            <div key={mission.id}>
+                                <div></div>
+                                <div>
+                                    <h2>{mission.name}</h2>
+                                    <p>{mission.description}</p>
+                                    <div>
+                                        <span>
+                                            {mission.type?.name ||
+                                                "Non spécifié"}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button>Voir les détails</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             )}
         </div>
     );

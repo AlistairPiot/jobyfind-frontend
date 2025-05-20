@@ -9,9 +9,10 @@ function CreateMissionForm() {
     const [types, setTypes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [description, setDescription] = useState("");
+    const [submitting, setSubmitting] = useState(false);
     const { isAuthenticated, userId, userRole } = useAuth();
 
-    const navigate = useNavigate(); // 👈 Initialisation du hook de navigation
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadTypes = async () => {
@@ -31,23 +32,42 @@ function CreateMissionForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitting(true);
 
         if (!isAuthenticated) {
             alert("Veuillez vous connecter avant de soumettre la mission.");
+            setSubmitting(false);
             return;
         }
 
         if (userRole !== "ROLE_COMPANY") {
             alert("Seules les entreprises peuvent créer des missions.");
+            setSubmitting(false);
             return;
         }
 
         if (!userId) {
             alert("Utilisateur non valide.");
+            setSubmitting(false);
+            return;
+        }
+
+        if (!typeId) {
+            alert("Veuillez sélectionner un type de mission.");
+            setSubmitting(false);
             return;
         }
 
         try {
+            // Affiche les données avant envoi pour le débogage
+            console.log("Données envoyées à l'API:", {
+                name,
+                description,
+                user: `/api/users/${userId}`,
+                type: typeId,
+            });
+
+            // Création de la mission
             await createMission({
                 name,
                 description,
@@ -56,59 +76,110 @@ function CreateMissionForm() {
             });
 
             alert("Mission créée avec succès !");
-            navigate("/dashboard/company"); // ✅ Redirection après succès
+            navigate("/dashboard/company");
         } catch (error) {
+            console.error("Erreur détaillée:", error);
+
             if (error.response) {
                 const errorDetails =
                     error.response.data["hydra:description"] ||
+                    error.response.data.detail ||
+                    error.response.statusText ||
                     "Erreur inconnue";
                 alert(
                     `Erreur lors de la création de la mission: ${errorDetails}`
                 );
             } else {
-                alert("Erreur inconnue lors de la création de la mission.");
+                alert(
+                    "Erreur de connexion au serveur. Veuillez vérifier votre connexion internet."
+                );
             }
+        } finally {
+            setSubmitting(false);
         }
     };
 
-    if (loading) return <p>Chargement des types...</p>;
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-32">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+                <p className="ml-4 text-gray-600">Chargement des types...</p>
+            </div>
+        );
+    }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>Nom de la mission :</label>
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
-            </div>
-            <div>
-                <label>Description :</label>
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                />
-            </div>
-            <div>
-                <label>Type :</label>
-                <select
-                    value={typeId}
-                    onChange={(e) => setTypeId(e.target.value)}
-                    required
-                >
-                    <option value="">-- Sélectionnez un type --</option>
-                    {types.map((type) => (
-                        <option key={type["@id"]} value={type["@id"]}>
-                            {type.name}
-                        </option>
-                    ))}
-                </select>
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+                <div>
+                    <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                        Nom de la mission
+                    </label>
+                    <input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        placeholder="Titre de la mission"
+                        className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="description"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                        Description
+                    </label>
+                    <textarea
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        required
+                        rows="6"
+                        placeholder="Décrivez les détails de la mission"
+                        className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="type"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                        Type de mission
+                    </label>
+                    <select
+                        id="type"
+                        value={typeId}
+                        onChange={(e) => setTypeId(e.target.value)}
+                        required
+                        className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    >
+                        <option value="">-- Sélectionnez un type --</option>
+                        {types.map((type) => (
+                            <option key={type["@id"]} value={type["@id"]}>
+                                {type.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
-            <button type="submit">Créer la mission</button>
+            <div className="flex justify-center mt-6">
+                <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md disabled:opacity-50"
+                >
+                    {submitting ? "Création en cours..." : "Créer la mission"}
+                </button>
+            </div>
         </form>
     );
 }
