@@ -91,7 +91,7 @@ export const getTypes = () =>
 // ✅ Récupération des missions d'un user
 export const getMissionsByUser = (userId) =>
     api
-        .get(`/missions?createdBy.id=${userId}`)
+        .get(`/missions?user.id=${userId}`)
         .then((res) => {
             console.log(res.data); // Ajoute cette ligne pour inspecter la réponse
             return res.data["member"] || [];
