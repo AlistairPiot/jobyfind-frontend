@@ -11,7 +11,19 @@ function ManageMissionApplications({ mission, onClose }) {
             try {
                 const data = await getMissionApplications(mission.id);
                 console.log("Données reçues:", data);
-                setApplications(data);
+
+                // Filtrer les candidatures pour n'inclure que celles liées à la mission sélectionnée
+                const filteredApplications = data.filter(
+                    (application) =>
+                        application.missions &&
+                        application.missions.some((m) => m.id === mission.id)
+                );
+
+                console.log(
+                    "Candidatures filtrées pour la mission:",
+                    filteredApplications
+                );
+                setApplications(filteredApplications);
             } catch (err) {
                 console.error("Erreur lors de la récupération:", err);
                 setError("Erreur lors de la récupération des candidatures");
