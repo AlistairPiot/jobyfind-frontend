@@ -203,3 +203,27 @@ export const getMissionApplications = (missionId) =>
             );
             return [];
         });
+
+// Mise à jour du profil utilisateur
+export const updateUserProfile = (userId, profileData) => {
+    console.log("Envoi de la requête PATCH à", `/users/${userId}`);
+    console.log("Données envoyées:", profileData);
+
+    return api
+        .patch(`/users/${userId}`, profileData, {
+            headers: {
+                "Content-Type": "application/merge-patch+json",
+            },
+        })
+        .then((res) => {
+            console.log("Réponse brute de l'API:", res);
+            return res.data;
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la mise à jour du profil:",
+                error.response || error
+            );
+            throw error;
+        });
+};
