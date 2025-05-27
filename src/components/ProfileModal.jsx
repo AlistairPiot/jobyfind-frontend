@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getUserById, updateUserProfile } from "../services/api";
+import UserBadge from "./UserBadge";
 
 function ProfileModal({ onClose }) {
     const {
@@ -258,19 +259,39 @@ function ProfileModal({ onClose }) {
                     <p className="text-red-600 text-center mb-4">{error}</p>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {getRoleSpecificFields()}
-
-                    <div className="flex justify-center mt-6">
-                        <button
-                            type="submit"
-                            disabled={saving}
-                            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md disabled:opacity-50"
-                        >
-                            {saving ? "Enregistrement..." : "Enregistrer"}
-                        </button>
+                {loading ? (
+                    <div className="flex justify-center items-center h-40">
+                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600"></div>
+                        <p className="ml-4 text-gray-600">
+                            Chargement du profil...
+                        </p>
                     </div>
-                </form>
+                ) : (
+                    <>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            {getRoleSpecificFields()}
+
+                            <div className="flex justify-center mt-6">
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md disabled:opacity-50"
+                                >
+                                    {saving
+                                        ? "Enregistrement..."
+                                        : "Enregistrer"}
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Afficher le composant de badge pour les freelances */}
+                        {userRole === "ROLE_FREELANCE" && (
+                            <div className="mt-8 pt-6 border-t border-gray-200">
+                                <UserBadge />
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );

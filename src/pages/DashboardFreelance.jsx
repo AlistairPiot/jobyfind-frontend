@@ -1,6 +1,7 @@
 import { useState } from "react";
 import JobApplicationForm from "../components/JobApplicationForm";
 import MyApplications from "../components/MyApplications";
+import UserBadge from "../components/UserBadge";
 import { getAllMissions } from "../services/api";
 
 function DashboardFreelance() {
@@ -43,17 +44,32 @@ function DashboardFreelance() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-blue-800">
+            <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-blue-800 mb-6">
                     Dashboard Freelance
                 </h1>
-                <button
-                    onClick={() => setShowMyApplications(true)}
-                    className="px-6 py-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors shadow-md"
-                >
-                    Gérer mes demandes
-                </button>
+                <div className="flex flex-wrap justify-center gap-4">
+                    <button
+                        onClick={handleShowMissions}
+                        className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-md"
+                    >
+                        Voir les missions
+                    </button>
+                    <button
+                        onClick={() => {
+                            setShowMyApplications(true);
+                            setShowMissions(false);
+                            setSelectedMission(null);
+                        }}
+                        className="px-6 py-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors shadow-md"
+                    >
+                        Mes candidatures
+                    </button>
+                </div>
             </div>
+
+            {/* Composant pour afficher le badge étudiant */}
+            <UserBadge />
 
             {!showMissions && (
                 <div className="text-center bg-white rounded-lg shadow-md p-8 mb-8">

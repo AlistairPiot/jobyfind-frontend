@@ -15,7 +15,7 @@ function App() {
                 </main>
                 <footer className="py-6 bg-gray-100 shadow-inner">
                     <div className="text-center text-gray-600 text-sm">
-                        <p>© 2024 Jobyfind - Tous droits réservés</p>
+                        <p>© 2025 Jobyfind - Tous droits réservés</p>
                     </div>
                 </footer>
             </div>
