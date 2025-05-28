@@ -1,10 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import {
     acceptBadgeRequest,
     getSchoolBadgeRequests,
-    getUserById,
     rejectBadgeRequest,
 } from "../services/api";
 
@@ -13,7 +11,6 @@ function SchoolBadgeRequests() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [students, setStudents] = useState({});
 
     useEffect(() => {
         const fetchRequests = async () => {
@@ -22,54 +19,7 @@ function SchoolBadgeRequests() {
                     setLoading(true);
                     const requestsData = await getSchoolBadgeRequests(userId);
                     console.log("Données reçues de l'API:", requestsData);
-
-                    // Si nous avons des demandes mais pas d'information utilisateur, essayons de les obtenir directement
-                    if (requestsData.length > 0) {
-                        const studentsData = {};
-                        const requestsWithUsers = [];
-
-                        for (const request of requestsData) {
-                            try {
-                                // Essayer d'obtenir plus de détails sur la demande
-                                const detailedRequest = await axios.get(
-                                    `http://localhost:8000/api/request_badges/${request.id}`
-                                );
-                                console.log(
-                                    `Détails de la demande ${request.id}:`,
-                                    detailedRequest.data
-                                );
-
-                                // Si nous n'avons pas d'information utilisateur, utilisons un ID par défaut pour le moment
-                                // En supposant que les demandes sont associées à l'utilisateur avec l'ID 8 (à adapter)
-                                const studentId = "8"; // ID par défaut à modifier selon votre base de données
-
-                                if (!studentsData[studentId]) {
-                                    const studentData = await getUserById(
-                                        studentId
-                                    );
-                                    studentsData[studentId] = studentData;
-                                }
-
-                                // Ajouter l'information utilisateur à la demande
-                                requestsWithUsers.push({
-                                    ...request,
-                                    user: `/api/users/${studentId}`,
-                                });
-                            } catch (err) {
-                                console.error(
-                                    `Erreur lors de la récupération des détails de la demande ${request.id}:`,
-                                    err
-                                );
-                                // Ajouter quand même la demande sans info utilisateur
-                                requestsWithUsers.push(request);
-                            }
-                        }
-
-                        setStudents(studentsData);
-                        setRequests(requestsWithUsers);
-                    } else {
-                        setRequests(requestsData);
-                    }
+                    setRequests(requestsData);
                 } catch (err) {
                     console.error(
                         "Erreur lors du chargement des demandes:",
@@ -85,24 +35,20 @@ function SchoolBadgeRequests() {
         fetchRequests();
     }, [userId, userRole]);
 
-    const handleAccept = async (requestId, studentId) => {
+    const handleAccept = async (requestId) => {
         try {
-            await acceptBadgeRequest(requestId, studentId);
+            await acceptBadgeRequest(requestId);
 
-            // Attendre un peu pour que les modifications soient prises en compte par l'API
-            setTimeout(async () => {
-                // Recharger les demandes de badge pour mettre à jour l'interface
-                const updatedRequests = await getSchoolBadgeRequests(userId);
-                setRequests(updatedRequests);
+            // Recharger les demandes de badge pour mettre à jour l'interface
+            const updatedRequests = await getSchoolBadgeRequests(userId);
+            setRequests(updatedRequests);
 
-                // Rafraîchir le composant SchoolBadgedStudents s'il est disponible
-                if (window.refreshBadgedStudents) {
-                    window.refreshBadgedStudents();
-                }
+            // Rafraîchir le composant SchoolBadgedStudents s'il est disponible
+            if (window.refreshBadgedStudents) {
+                window.refreshBadgedStudents();
+            }
 
-                // Afficher un message de confirmation
-                alert("La demande de badge a été acceptée avec succès !");
-            }, 1000);
+            alert("La demande de badge a été acceptée avec succès !");
         } catch (err) {
             console.error("Erreur lors de l'acceptation de la demande:", err);
             setError("Erreur lors de l'acceptation de la demande de badge");
@@ -113,17 +59,11 @@ function SchoolBadgeRequests() {
         try {
             await rejectBadgeRequest(requestId);
 
-            // Attendre un peu pour que les modifications soient prises en compte par l'API
-            setTimeout(async () => {
-                // Recharger les demandes de badge pour mettre à jour l'interface
-                const updatedRequests = await getSchoolBadgeRequests(userId);
+            // Recharger les demandes de badge pour mettre à jour l'interface
+            const updatedRequests = await getSchoolBadgeRequests(userId);
+            setRequests(updatedRequests);
 
-                // Le filtrage est maintenant fait dans getSchoolBadgeRequests basé sur responseDate
-                setRequests(updatedRequests);
-
-                // Afficher un message de confirmation
-                alert("La demande de badge a été refusée.");
-            }, 1000);
+            alert("La demande de badge a été refusée.");
         } catch (err) {
             console.error("Erreur lors du refus de la demande:", err);
             setError("Erreur lors du refus de la demande de badge");
@@ -150,14 +90,6 @@ function SchoolBadgeRequests() {
         );
     }
 
-    const getStudentData = (requestUserId) => {
-        if (!requestUserId) return {}; // Retourner un objet vide si requestUserId est undefined
-
-        const path = requestUserId.split("/");
-        const id = path[path.length - 1];
-        return students[id] || {};
-    };
-
     return (
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -179,79 +111,46 @@ function SchoolBadgeRequests() {
             ) : (
                 <div className="space-y-4">
                     {requests.map((request) => {
-                        const student = getStudentData(request.user);
-                        const studentId = request.user
+                        const userId = request.user
                             ? request.user.split("/").pop()
-                            : "8"; // ID par défaut à modifier
+                            : null;
 
                         return (
                             <div
                                 key={request.id}
-                                className="border rounded-lg p-4 shadow-sm"
+                                className="border border-gray-200 rounded-lg p-4 bg-gray-50"
                             >
                                 <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="font-semibold text-lg text-gray-800">
-                                            {student.firstName || "Prénom"}{" "}
-                                            {student.lastName || "Nom"}
+                                    <div className="flex-1">
+                                        <h3 className="font-medium text-gray-800">
+                                            Demande de badge #{request.id}
                                         </h3>
                                         <p className="text-sm text-gray-600 mt-1">
-                                            Email :{" "}
-                                            {student.email || "Non disponible"}
+                                            Utilisateur ID: {userId}
                                         </p>
-                                        <p className="text-sm text-gray-600 mt-1">
-                                            Demande reçue le :{" "}
+                                        <p className="text-sm text-gray-600">
+                                            Date de demande:{" "}
                                             {new Date(
                                                 request.requestDate
-                                            ).toLocaleDateString()}
-                                        </p>
-                                        <p className="text-sm text-gray-600 mt-1">
-                                            ID de la demande : {request.id}
+                                            ).toLocaleDateString("fr-FR")}
                                         </p>
                                     </div>
-                                    <div className="flex space-x-2">
+                                    <div className="flex space-x-2 ml-4">
                                         <button
                                             onClick={() =>
-                                                handleAccept(
-                                                    request.id,
-                                                    studentId
-                                                )
+                                                handleAccept(request.id)
                                             }
-                                            className="p-2 bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
-                                            title="Accepter"
+                                            className="px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
                                         >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-5 w-5"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
+                                            Accepter
                                         </button>
                                         <button
                                             onClick={() =>
                                                 handleReject(request.id)
                                             }
-                                            className="p-2 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-                                            title="Refuser"
+                                            className="px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
                                         >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-5 w-5"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
+                                            Refuser
                                         </button>
                                     </div>
                                 </div>
