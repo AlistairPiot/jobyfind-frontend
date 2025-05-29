@@ -1,7 +1,11 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { getSchools, getUserById, removeBadge } from "../services/api";
+import {
+    getSchools,
+    getUserBadgeRequests,
+    getUserById,
+    removeBadge,
+} from "../services/api";
 import BadgeRequestModal from "./BadgeRequestModal";
 
 function UserBadge() {
@@ -47,17 +51,13 @@ function UserBadge() {
 
                     // Vérifier s'il y a des demandes en cours pour cet utilisateur
                     try {
-                        const badgeRequestsResponse = await axios.get(
-                            `http://localhost:8000/api/request_badges?user=/api/users/${userId}`
-                        );
+                        const requests = await getUserBadgeRequests(userId);
 
                         console.log(
                             "Vérification des demandes de badge:",
-                            badgeRequestsResponse.data
+                            requests
                         );
 
-                        const requests =
-                            badgeRequestsResponse.data.member || [];
                         // Chercher une demande sans responseDate (en attente)
                         const pendingRequest = requests.find(
                             (req) => !req.responseDate
@@ -86,7 +86,7 @@ function UserBadge() {
                     }
 
                     // S'il n'a pas de badge ni de demande, rien à afficher
-                    if (!userHasBadge && !data.requestBadge) {
+                    if (!userHasBadge) {
                         setBadgeStatus({
                             hasBadge: false,
                             hasPendingRequest: false,
@@ -99,58 +99,20 @@ function UserBadge() {
                     // Récupérer le nom de l'école si l'utilisateur a un badge
                     let schoolName = "Votre école";
 
-                    if (userHasBadge && data.school) {
+                    if (userHasBadge) {
+                        // Chercher dans les demandes acceptées pour trouver l'école
                         try {
-                            // L'utilisateur a une référence directe à l'école
-                            const schoolId = data.school.split("/").pop();
-                            const schools = await getSchools();
-                            const school = schools.find(
-                                (s) => s.id == schoolId
+                            const allRequests = await getUserBadgeRequests(
+                                userId
+                            );
+                            const acceptedRequest = allRequests.find(
+                                (req) => req.status === "ACCEPTED"
                             );
 
-                            if (school && school.nameSchool) {
-                                schoolName = school.nameSchool;
-                            }
-                        } catch (schoolErr) {
-                            console.error(
-                                "Erreur lors de la récupération de l'école:",
-                                schoolErr
-                            );
-                        }
-                    }
-
-                    // Si l'utilisateur a une référence à une demande de badge
-                    if (data.requestBadge) {
-                        try {
-                            const requestId = data.requestBadge
-                                .split("/")
-                                .pop();
-                            setBadgeRequestId(requestId);
-
-                            // Récupérer les détails de la demande
-                            const requestDetails = await axios.get(
-                                `http://localhost:8000/api/request_badges/${requestId}`
-                            );
-
-                            // Vérifier si la demande a un statut et si elle est acceptée
-                            const isAccepted =
-                                requestDetails.data.status === "ACCEPTED";
-                            const hasPending =
-                                !requestDetails.data.responseDate;
-
-                            console.log(
-                                "Demande de badge:",
-                                requestDetails.data
-                            );
-                            console.log("Demande acceptée?", isAccepted);
-                            console.log("Demande en attente?", hasPending);
-
-                            // Si la demande a été acceptée, récupérer le nom de l'école
-                            if (isAccepted && requestDetails.data.school) {
-                                const schoolPath =
-                                    requestDetails.data.school.split("/");
-                                const schoolId =
-                                    schoolPath[schoolPath.length - 1];
+                            if (acceptedRequest && acceptedRequest.school) {
+                                const schoolId = acceptedRequest.school
+                                    .split("/")
+                                    .pop();
                                 const schools = await getSchools();
                                 const school = schools.find(
                                     (s) => s.id == schoolId
@@ -160,32 +122,20 @@ function UserBadge() {
                                     schoolName = school.nameSchool;
                                 }
                             }
-
-                            // Mettre à jour le statut du badge en fonction de la demande
-                            setBadgeStatus({
-                                hasBadge: userHasBadge || isAccepted,
-                                hasPendingRequest: hasPending,
-                                schoolName: schoolName,
-                            });
-                        } catch (requestErr) {
+                        } catch (schoolErr) {
                             console.error(
-                                "Erreur lors de la récupération de la demande:",
-                                requestErr
+                                "Erreur lors de la récupération de l'école:",
+                                schoolErr
                             );
-                            setBadgeStatus({
-                                hasBadge: userHasBadge,
-                                hasPendingRequest: false,
-                                schoolName: schoolName,
-                            });
                         }
-                    } else {
-                        // Si l'utilisateur n'a pas de référence à une demande mais a un badge
-                        setBadgeStatus({
-                            hasBadge: userHasBadge,
-                            hasPendingRequest: false,
-                            schoolName: schoolName,
-                        });
                     }
+
+                    // Mettre à jour le statut du badge
+                    setBadgeStatus({
+                        hasBadge: userHasBadge,
+                        hasPendingRequest: false,
+                        schoolName: schoolName,
+                    });
                 } catch (err) {
                     console.error("Erreur lors du chargement du profil:", err);
                     setError("Impossible de charger les informations du badge");
