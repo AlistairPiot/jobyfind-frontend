@@ -79,7 +79,14 @@ export const createMission = (missionData) =>
 export const getTypes = () =>
     api
         .get("/types")
-        .then((res) => res.data["member"] || res.data)
+        .then((res) => {
+            const types = res.data["member"] || res.data;
+            // Extraire l'ID numérique de l'@id pour chaque type
+            return types.map((type) => ({
+                ...type,
+                id: parseInt(type["@id"].split("/").pop()),
+            }));
+        })
         .catch((error) => {
             console.error(
                 "Erreur lors de la récupération des types:",

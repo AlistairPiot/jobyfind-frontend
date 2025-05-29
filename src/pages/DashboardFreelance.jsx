@@ -1,16 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import JobApplicationForm from "../components/JobApplicationForm";
 import MyApplications from "../components/MyApplications";
 import UserBadge from "../components/UserBadge";
-import { getAllMissions } from "../services/api";
+import { getAllMissions, getTypes } from "../services/api";
 
 function DashboardFreelance() {
     const [missions, setMissions] = useState([]);
+    const [filteredMissions, setFilteredMissions] = useState([]);
+    const [types, setTypes] = useState([]);
+    const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
     const [showMissions, setShowMissions] = useState(false);
     const [selectedMission, setSelectedMission] = useState(null);
     const [showApplicationForm, setShowApplicationForm] = useState(false);
     const [showMyApplications, setShowMyApplications] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [typesLoading, setTypesLoading] = useState(false);
+
+    // Charger les types de contrat au montage du composant
+    useEffect(() => {
+        const loadTypes = async () => {
+            setTypesLoading(true);
+            try {
+                const typesData = await getTypes();
+                setTypes(typesData);
+            } catch (error) {
+                console.error("Erreur lors du chargement des types:", error);
+            } finally {
+                setTypesLoading(false);
+            }
+        };
+
+        loadTypes();
+    }, []);
+
+    // Filtrer les missions quand le filtre ou les missions changent
+    useEffect(() => {
+        if (!selectedTypeFilter) {
+            setFilteredMissions(missions);
+        } else {
+            const filtered = missions.filter((mission) => {
+                return (
+                    mission.type &&
+                    mission.type.id === parseInt(selectedTypeFilter)
+                );
+            });
+            setFilteredMissions(filtered);
+        }
+    }, [missions, selectedTypeFilter]);
 
     const handleShowMissions = async () => {
         setLoading(true);
@@ -40,6 +76,14 @@ function DashboardFreelance() {
         alert("Votre candidature a été envoyée avec succès !");
         setShowApplicationForm(false);
         setSelectedMission(null);
+    };
+
+    const handleFilterChange = (typeId) => {
+        setSelectedTypeFilter(typeId);
+    };
+
+    const clearFilter = () => {
+        setSelectedTypeFilter("");
     };
 
     return (
@@ -121,15 +165,100 @@ function DashboardFreelance() {
                     <h2 className="text-2xl font-semibold mb-6 border-b pb-2 text-center">
                         Missions disponibles
                     </h2>
-                    {missions.length === 0 ? (
+
+                    {/* Section de filtrage */}
+                    <div className="mb-6 bg-gray-50 p-4 rounded-lg">
+                        <div className="flex flex-wrap items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5 text-gray-600"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                                <label className="text-sm font-medium text-gray-700">
+                                    Filtrer par type :
+                                </label>
+                            </div>
+
+                            <div className="flex-1 min-w-48">
+                                <select
+                                    value={selectedTypeFilter}
+                                    onChange={(e) =>
+                                        handleFilterChange(e.target.value)
+                                    }
+                                    disabled={typesLoading}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                >
+                                    <option value="">Tous les types</option>
+                                    {types.map((type) => (
+                                        <option key={type.id} value={type.id}>
+                                            {type.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {selectedTypeFilter && (
+                                <button
+                                    onClick={clearFilter}
+                                    className="px-3 py-2 text-sm bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors flex items-center gap-1"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-4 w-4"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    Effacer
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Affichage du nombre de résultats */}
+                        <div className="mt-3 text-sm text-gray-600">
+                            {selectedTypeFilter ? (
+                                <>
+                                    {filteredMissions.length} mission(s)
+                                    trouvée(s) pour le type "
+                                    {
+                                        types.find(
+                                            (t) =>
+                                                t.id ===
+                                                parseInt(selectedTypeFilter)
+                                        )?.name
+                                    }
+                                    "
+                                </>
+                            ) : (
+                                <>{missions.length} mission(s) au total</>
+                            )}
+                        </div>
+                    </div>
+
+                    {filteredMissions.length === 0 ? (
                         <div className="text-center py-8">
                             <p className="text-gray-600">
-                                Aucune mission disponible pour le moment.
+                                {selectedTypeFilter
+                                    ? "Aucune mission trouvée pour ce type de contrat."
+                                    : "Aucune mission disponible pour le moment."}
                             </p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {missions.map((mission) => (
+                            {filteredMissions.map((mission) => (
                                 <div
                                     key={mission.id}
                                     onClick={() => handleMissionClick(mission)}
