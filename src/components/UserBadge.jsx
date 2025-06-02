@@ -69,10 +69,39 @@ function UserBadge() {
                                 pendingRequest
                             );
                             setBadgeRequestId(pendingRequest.id);
+
+                            // Récupérer le nom de l'école pour la demande en attente
+                            let pendingSchoolName = "Votre école";
+                            try {
+                                if (pendingRequest.school) {
+                                    const schoolId = pendingRequest.school
+                                        .split("/")
+                                        .pop();
+                                    const schools = await getSchools();
+                                    const school = schools.find(
+                                        (s) => s.id == schoolId
+                                    );
+
+                                    if (school) {
+                                        // Utiliser le nom de l'école si disponible, sinon l'email
+                                        pendingSchoolName =
+                                            school.nameSchool &&
+                                            school.nameSchool.trim() !== ""
+                                                ? school.nameSchool
+                                                : school.email;
+                                    }
+                                }
+                            } catch (schoolErr) {
+                                console.error(
+                                    "Erreur lors de la récupération de l'école pour la demande en attente:",
+                                    schoolErr
+                                );
+                            }
+
                             setBadgeStatus({
                                 hasBadge: userHasBadge,
                                 hasPendingRequest: true,
-                                schoolName: "Votre école",
+                                schoolName: pendingSchoolName,
                             });
                             setLoading(false);
                             return;
@@ -118,8 +147,13 @@ function UserBadge() {
                                     (s) => s.id == schoolId
                                 );
 
-                                if (school && school.nameSchool) {
-                                    schoolName = school.nameSchool;
+                                if (school) {
+                                    // Utiliser le nom de l'école si disponible, sinon l'email
+                                    schoolName =
+                                        school.nameSchool &&
+                                        school.nameSchool.trim() !== ""
+                                            ? school.nameSchool
+                                            : school.email;
                                 }
                             }
                         } catch (schoolErr) {

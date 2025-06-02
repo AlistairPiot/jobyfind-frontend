@@ -238,7 +238,7 @@ export const updateUserProfile = (userId, profileData) => {
 // Récupérer toutes les écoles
 export const getSchools = () =>
     api
-        .get(`/users?roles=ROLE_SCHOOL`)
+        .get(`/users?roles=ROLE_SCHOOL&groups[]=user:read`)
         .then((res) => res.data["member"] || [])
         .catch((error) => {
             console.error("Erreur lors de la récupération des écoles:", error);
