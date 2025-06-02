@@ -30,35 +30,103 @@ const CheckoutForm = ({ mission, onSuccess, onCancel }) => {
 
         const cardElement = elements.getElement(CardElement);
 
-        // Créer un token de paiement
-        const { error: tokenError, token } = await stripe.createToken(
-            cardElement
-        );
+        try {
+            // Étape 1 : Créer un PaymentIntent via le backend
+            console.log("🚀 Création du PaymentIntent via le backend...");
 
-        if (tokenError) {
-            setError(tokenError.message);
-            setLoading(false);
-            return;
-        }
-
-        // En mode test, on simule un paiement réussi
-        // Dans un vrai environnement, vous enverriez le token à votre backend
-        console.log("Token de paiement créé:", token);
-        console.log(
-            "Simulation du paiement de",
-            STRIPE_CONFIG.applicationFee / 100,
-            "€"
-        );
-
-        // Simuler le traitement du paiement
-        setTimeout(() => {
-            console.log(
-                "✅ Paiement simulé réussi pour la mission:",
-                mission.name
+            const paymentIntentResponse = await fetch(
+                "http://localhost:8000/api/payment/create-payment-intent",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        amount: STRIPE_CONFIG.applicationFee,
+                        mission_name: mission.name,
+                        mission_id: mission.id || "unknown",
+                        name: `Candidat pour ${mission.name}`,
+                        email: "candidat@jobyfind.com",
+                    }),
+                }
             );
-            onSuccess();
+
+            if (!paymentIntentResponse.ok) {
+                const errorData = await paymentIntentResponse.json();
+                throw new Error(
+                    errorData.error ||
+                        "Erreur lors de la création du PaymentIntent"
+                );
+            }
+
+            const { client_secret, customer_id, payment_intent_id } =
+                await paymentIntentResponse.json();
+            console.log("✅ PaymentIntent créé:", payment_intent_id);
+            console.log("✅ Customer créé:", customer_id);
+
+            // Étape 2 : Confirmer le paiement avec Stripe
+            console.log("💳 Confirmation du paiement...");
+
+            const { error: confirmError, paymentIntent } =
+                await stripe.confirmCardPayment(client_secret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: {
+                            name: `Candidat pour ${mission.name}`,
+                            email: "candidat@jobyfind.com",
+                        },
+                    },
+                });
+
+            if (confirmError) {
+                setError(confirmError.message);
+                setLoading(false);
+                return;
+            }
+
+            // Étape 3 : Vérifier le statut final
+            if (paymentIntent.status === "succeeded") {
+                console.log("🎉 Paiement réussi !");
+                console.log(
+                    "💰 Montant payé:",
+                    paymentIntent.amount / 100,
+                    "€"
+                );
+                console.log("🎯 Mission:", mission.name);
+                console.log("👤 Customer ID:", customer_id);
+                console.log("🆔 PaymentIntent ID:", paymentIntent.id);
+
+                // Afficher un message de succès
+                alert(`🎉 Paiement réussi !
+
+💰 Montant: ${paymentIntent.amount / 100}€
+🎯 Mission: ${mission.name}
+🆔 Transaction ID: ${paymentIntent.id}
+👤 Customer ID: ${customer_id}
+
+✅ MAINTENANT VISIBLE DANS VOTRE DASHBOARD STRIPE :
+1. Dashboard > Payments (transaction complète)
+2. Dashboard > Customers (nouveau customer)
+3. Developers > Events (événements de paiement)
+4. Developers > Logs (toutes les requêtes API)
+
+Allez vérifier votre dashboard Stripe ! 🚀`);
+
+                onSuccess();
+            } else {
+                setError(
+                    `Paiement non confirmé. Statut: ${paymentIntent.status}`
+                );
+            }
+        } catch (error) {
+            console.error("❌ Erreur lors du paiement:", error);
+            setError(
+                error.message ||
+                    "Une erreur est survenue lors du traitement du paiement"
+            );
+        } finally {
             setLoading(false);
-        }, 2000);
+        }
     };
 
     return (
@@ -91,6 +159,32 @@ const CheckoutForm = ({ mission, onSuccess, onCancel }) => {
                 </div>
             </div>
 
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <div className="flex items-start">
+                    <svg
+                        className="h-5 w-5 text-green-400 mt-0.5 mr-2 flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                    <div>
+                        <p className="text-sm font-medium text-green-800">
+                            Paiement complet via backend !
+                        </p>
+                        <p className="text-xs text-green-700 mt-1">
+                            Ce paiement sera visible dans toutes les sections de
+                            votre dashboard Stripe ! Carte de test : 4242 4242
+                            4242 4242
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -114,31 +208,6 @@ const CheckoutForm = ({ mission, onSuccess, onCancel }) => {
                                 },
                             }}
                         />
-                    </div>
-                </div>
-
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <div className="flex items-start">
-                        <svg
-                            className="h-5 w-5 text-yellow-400 mt-0.5 mr-2 flex-shrink-0"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                        >
-                            <path
-                                fillRule="evenodd"
-                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                        <div>
-                            <p className="text-sm font-medium text-yellow-800">
-                                Mode test activé
-                            </p>
-                            <p className="text-xs text-yellow-700 mt-1">
-                                Utilisez le numéro de carte test : 4242 4242
-                                4242 4242
-                            </p>
-                        </div>
                     </div>
                 </div>
 
@@ -183,7 +252,7 @@ const CheckoutForm = ({ mission, onSuccess, onCancel }) => {
                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                     ></path>
                                 </svg>
-                                Traitement...
+                                Traitement du paiement...
                             </>
                         ) : (
                             `Payer ${(
