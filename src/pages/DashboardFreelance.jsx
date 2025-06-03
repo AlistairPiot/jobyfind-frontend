@@ -269,6 +269,16 @@ function DashboardFreelance() {
                                         <h3 className="font-bold text-lg text-gray-800 mb-2 text-center">
                                             {mission.name}
                                         </h3>
+
+                                        {/* Nom de l'entreprise */}
+                                        {mission.user?.nameCompany && (
+                                            <div className="text-center mb-2">
+                                                <span className="text-sm text-gray-700 font-medium">
+                                                    {mission.user.nameCompany}
+                                                </span>
+                                            </div>
+                                        )}
+
                                         <div className="flex justify-center mb-3">
                                             <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full">
                                                 {mission.type?.name ||
@@ -316,6 +326,16 @@ function DashboardFreelance() {
                         <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
                             {selectedMission.name}
                         </h2>
+
+                        {/* Nom de l'entreprise dans la vue détaillée */}
+                        {selectedMission.user?.nameCompany && (
+                            <div className="text-center mb-3">
+                                <span className="text-lg text-gray-700 font-medium">
+                                    {selectedMission.user.nameCompany}
+                                </span>
+                            </div>
+                        )}
+
                         <div className="flex justify-center">
                             <span className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
                                 {selectedMission.type?.name || "Non spécifié"}
