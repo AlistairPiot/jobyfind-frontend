@@ -51,7 +51,8 @@ function BadgeRequestModal({ onClose }) {
                 if (typeof window.refreshUserBadge === "function") {
                     window.refreshUserBadge();
                 }
-            }, 500);
+                onClose();
+            }, 1500);
         } catch (err) {
             console.error("Erreur lors de la demande de badge:", err);
             setError("Erreur lors de l'envoi de la demande de badge");
