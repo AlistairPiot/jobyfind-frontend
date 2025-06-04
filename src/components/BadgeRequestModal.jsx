@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { createBadgeRequest, getSchools } from "../services/api";
 
@@ -10,6 +10,7 @@ function BadgeRequestModal({ onClose }) {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const timeoutRef = useRef(null);
 
     useEffect(() => {
         const fetchSchools = async () => {
@@ -27,6 +28,28 @@ function BadgeRequestModal({ onClose }) {
 
         fetchSchools();
     }, []);
+
+    // Nettoyer le timeout quand le composant se démonte
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
+
+    const handleClose = () => {
+        // Annuler le timeout s'il existe
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+        // Rafraîchir le badge si la demande a été envoyée avec succès
+        if (success && typeof window.refreshUserBadge === "function") {
+            window.refreshUserBadge();
+        }
+        onClose();
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,12 +70,13 @@ function BadgeRequestModal({ onClose }) {
             console.log("Réponse de la création de la demande:", response);
             setSuccess(true);
 
-            setTimeout(() => {
+            // Programmer la fermeture automatique après 3 secondes
+            timeoutRef.current = setTimeout(() => {
                 if (typeof window.refreshUserBadge === "function") {
                     window.refreshUserBadge();
                 }
                 onClose();
-            }, 1500);
+            }, 3000);
         } catch (err) {
             console.error("Erreur lors de la demande de badge:", err);
             setError("Erreur lors de l'envoi de la demande de badge");
@@ -69,7 +93,7 @@ function BadgeRequestModal({ onClose }) {
                         Demande de badge
                     </h2>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="text-gray-500 hover:text-gray-700"
                     >
                         ✕
@@ -100,15 +124,7 @@ function BadgeRequestModal({ onClose }) {
                             recevrez une notification lorsqu'elle sera traitée.
                         </p>
                         <button
-                            onClick={() => {
-                                onClose();
-                                if (
-                                    typeof window.refreshUserBadge ===
-                                    "function"
-                                ) {
-                                    window.refreshUserBadge();
-                                }
-                            }}
+                            onClick={handleClose}
                             className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                         >
                             Fermer
