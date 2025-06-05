@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import JobApplicationForm from "../components/JobApplicationForm";
 import MyApplications from "../components/MyApplications";
 import UserBadge from "../components/UserBadge";
-import { getAllMissions, getTypes } from "../services/api";
+import { useAuth } from "../context/AuthContext";
+import { getAllMissions, getTypes, getUserApplications } from "../services/api";
 
 function DashboardFreelance() {
+    const { userId } = useAuth();
     const [missions, setMissions] = useState([]);
     const [filteredMissions, setFilteredMissions] = useState([]);
     const [types, setTypes] = useState([]);
+    const [userApplications, setUserApplications] = useState([]);
     const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
     const [showMissions, setShowMissions] = useState(false);
     const [selectedMission, setSelectedMission] = useState(null);
@@ -32,6 +35,34 @@ function DashboardFreelance() {
 
         loadTypes();
     }, []);
+
+    // Charger les candidatures utilisateur au montage
+    useEffect(() => {
+        const loadUserApplications = async () => {
+            try {
+                const applications = await getUserApplications(userId);
+                setUserApplications(applications);
+            } catch (error) {
+                console.error(
+                    "Erreur lors du chargement des candidatures:",
+                    error
+                );
+            }
+        };
+
+        if (userId) {
+            loadUserApplications();
+        }
+    }, [userId]);
+
+    // Fonction pour vérifier si l'utilisateur a déjà postulé à une mission
+    const hasUserApplied = (missionId) => {
+        return userApplications.some(
+            (application) =>
+                application.missions &&
+                application.missions.some((mission) => mission.id === missionId)
+        );
+    };
 
     // Filtrer les missions quand le filtre ou les missions changent
     useEffect(() => {
@@ -72,10 +103,20 @@ function DashboardFreelance() {
         setShowApplicationForm(true);
     };
 
-    const handleApplicationSuccess = () => {
+    const handleApplicationSuccess = async () => {
         alert("Votre candidature a été envoyée avec succès !");
         setShowApplicationForm(false);
-        setSelectedMission(null);
+        // Recharger les candidatures pour mettre à jour l'état
+        try {
+            const applications = await getUserApplications(userId);
+            setUserApplications(applications);
+        } catch (error) {
+            console.error(
+                "Erreur lors du rechargement des candidatures:",
+                error
+            );
+        }
+        // Ne pas fermer selectedMission pour que l'utilisateur voit "Candidature envoyée"
     };
 
     const handleFilterChange = (typeId) => {
@@ -262,9 +303,19 @@ function DashboardFreelance() {
                                 <div
                                     key={mission.id}
                                     onClick={() => handleMissionClick(mission)}
-                                    className="border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow cursor-pointer"
+                                    className={`border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow cursor-pointer ${
+                                        hasUserApplied(mission.id)
+                                            ? "bg-green-50 border-green-200"
+                                            : ""
+                                    }`}
                                 >
-                                    <div className="h-2 bg-blue-600"></div>
+                                    <div
+                                        className={`h-2 ${
+                                            hasUserApplied(mission.id)
+                                                ? "bg-green-600"
+                                                : "bg-blue-600"
+                                        }`}
+                                    ></div>
                                     <div className="p-5 flex-grow">
                                         <h3 className="font-bold text-lg text-gray-800 mb-2 text-center">
                                             {mission.name}
@@ -289,9 +340,15 @@ function DashboardFreelance() {
                                             {mission.description}
                                         </p>
                                         <div className="flex justify-center">
-                                            <span className="text-blue-600 text-sm font-medium hover:underline">
-                                                Voir les détails →
-                                            </span>
+                                            {hasUserApplied(mission.id) ? (
+                                                <span className="text-green-600 text-sm font-medium">
+                                                    ✓ Candidature envoyée
+                                                </span>
+                                            ) : (
+                                                <span className="text-blue-600 text-sm font-medium hover:underline">
+                                                    Voir les détails →
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -355,24 +412,44 @@ function DashboardFreelance() {
                     </div>
 
                     <div className="flex justify-center">
-                        <button
-                            onClick={handleApply}
-                            className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors shadow-md flex items-center"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 mr-2"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
+                        {hasUserApplied(selectedMission.id) ? (
+                            <div className="flex items-center bg-green-100 text-green-800 px-6 py-3 rounded-md">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5 mr-2"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                                <span className="font-medium">
+                                    Candidature envoyée
+                                </span>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={handleApply}
+                                className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors shadow-md flex items-center"
                             >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                            Postuler à cette mission
-                        </button>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5 mr-2"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                                Postuler à cette mission
+                            </button>
+                        )}
                     </div>
                 </div>
             )}
