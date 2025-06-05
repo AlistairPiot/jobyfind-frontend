@@ -3,7 +3,12 @@ import JobApplicationForm from "../components/JobApplicationForm";
 import MyApplications from "../components/MyApplications";
 import UserBadge from "../components/UserBadge";
 import { useAuth } from "../context/AuthContext";
-import { getAllMissions, getTypes, getUserApplications } from "../services/api";
+import {
+    getAllMissions,
+    getRecommendedMissions,
+    getTypes,
+    getUserApplications,
+} from "../services/api";
 
 function DashboardFreelance() {
     const { userId } = useAuth();
@@ -11,6 +16,7 @@ function DashboardFreelance() {
     const [filteredMissions, setFilteredMissions] = useState([]);
     const [types, setTypes] = useState([]);
     const [userApplications, setUserApplications] = useState([]);
+    const [recommendedMissionIds, setRecommendedMissionIds] = useState([]);
     const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
     const [showMissions, setShowMissions] = useState(false);
     const [selectedMission, setSelectedMission] = useState(null);
@@ -55,6 +61,25 @@ function DashboardFreelance() {
         }
     }, [userId]);
 
+    // Charger les missions recommandées au montage
+    useEffect(() => {
+        const loadRecommendedMissions = async () => {
+            try {
+                const recommendedIds = await getRecommendedMissions(userId);
+                setRecommendedMissionIds(recommendedIds);
+            } catch (error) {
+                console.error(
+                    "Erreur lors du chargement des missions recommandées:",
+                    error
+                );
+            }
+        };
+
+        if (userId) {
+            loadRecommendedMissions();
+        }
+    }, [userId]);
+
     // Fonction pour vérifier si l'utilisateur a déjà postulé à une mission
     const hasUserApplied = (missionId) => {
         return userApplications.some(
@@ -62,6 +87,11 @@ function DashboardFreelance() {
                 application.missions &&
                 application.missions.some((mission) => mission.id === missionId)
         );
+    };
+
+    // Fonction pour vérifier si une mission est recommandée
+    const isMissionRecommended = (missionId) => {
+        return recommendedMissionIds.includes(missionId);
     };
 
     // Filtrer les missions quand le filtre ou les missions changent
@@ -330,11 +360,18 @@ function DashboardFreelance() {
                                             </div>
                                         )}
 
-                                        <div className="flex justify-center mb-3">
+                                        <div className="flex justify-center mb-3 gap-2">
                                             <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full">
                                                 {mission.type?.name ||
                                                     "Non spécifié"}
                                             </span>
+                                            {isMissionRecommended(
+                                                mission.id
+                                            ) && (
+                                                <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2.5 py-0.5 rounded-full">
+                                                    ⭐ Mission conseillée
+                                                </span>
+                                            )}
                                         </div>
                                         <p className="text-sm text-gray-600 mb-4 line-clamp-3">
                                             {mission.description}
@@ -398,6 +435,14 @@ function DashboardFreelance() {
                                 {selectedMission.type?.name || "Non spécifié"}
                             </span>
                         </div>
+
+                        {isMissionRecommended(selectedMission.id) && (
+                            <div className="flex justify-center mt-3">
+                                <span className="inline-block bg-purple-100 text-purple-800 text-sm px-3 py-1 rounded-full">
+                                    ⭐ Mission conseillée par votre école
+                                </span>
+                            </div>
+                        )}
                     </div>
 
                     <div className="space-y-6 mb-8">

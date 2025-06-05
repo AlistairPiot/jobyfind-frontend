@@ -362,14 +362,68 @@ export const getSchoolBadgedStudents = (schoolId) =>
 export const removeBadge = (userId) =>
     api
         .delete(`/remove_badge/${userId}`)
-        .then((res) => {
-            console.log("Badge retiré avec succès:", res.data);
-            return res.data;
-        })
+        .then((res) => res.data)
         .catch((error) => {
             console.error(
                 "Erreur lors de la suppression du badge:",
                 error.response || error
             );
             throw error;
+        });
+
+// ===== FONCTIONS POUR LES RECOMMANDATIONS DE MISSIONS =====
+
+// ✅ Récupération des étudiants badgés par une école
+export const getSchoolStudents = (schoolId) =>
+    api
+        .get(`/school/${schoolId}/students`)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des étudiants:",
+                error.response || error
+            );
+            throw error;
+        });
+
+// ✅ Recommander une mission à des étudiants
+export const recommendMission = (missionId, schoolId, studentIds) =>
+    api
+        .post(`/missions/${missionId}/recommend`, {
+            schoolId: schoolId,
+            students: studentIds,
+        })
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la recommandation:",
+                error.response || error
+            );
+            throw error;
+        });
+
+// ✅ Récupération des missions recommandées pour un étudiant
+export const getRecommendedMissions = (studentId) =>
+    api
+        .get(`/students/${studentId}/recommended-missions`)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des missions recommandées:",
+                error.response || error
+            );
+            return [];
+        });
+
+// ✅ Récupération des recommandations faites par une école
+export const getSchoolRecommendations = (schoolId) =>
+    api
+        .get(`/school/${schoolId}/recommendations`)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des recommandations de l'école:",
+                error.response || error
+            );
+            return [];
         });

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import MissionRecommendationModal from "../components/MissionRecommendationModal";
 import SchoolBadgeRequests from "../components/SchoolBadgeRequests";
 import SchoolBadgedStudents from "../components/SchoolBadgedStudents";
+import SchoolRecommendations from "../components/SchoolRecommendations";
 import { getAllMissions, getTypes } from "../services/api";
 
 function DashboardSchool() {
@@ -13,6 +15,8 @@ function DashboardSchool() {
     const [selectedMission, setSelectedMission] = useState(null);
     const [loading, setLoading] = useState(false);
     const [typesLoading, setTypesLoading] = useState(false);
+    const [showRecommendationModal, setShowRecommendationModal] =
+        useState(false);
 
     // Charger les types de contrat au montage du composant
     useEffect(() => {
@@ -139,6 +143,9 @@ function DashboardSchool() {
 
                     {/* Composant pour afficher les étudiants badgés */}
                     <SchoolBadgedStudents />
+
+                    {/* Composant pour afficher les recommandations */}
+                    <SchoolRecommendations />
                 </div>
             )}
 
@@ -338,14 +345,22 @@ function DashboardSchool() {
                     </div>
 
                     <div className="flex justify-center">
-                        <div className="bg-blue-50 text-blue-800 px-6 py-3 rounded-md border border-blue-200">
-                            <span className="font-medium">
-                                Mission consultée en mode École
-                            </span>
-                        </div>
+                        <button
+                            onClick={() => setShowRecommendationModal(true)}
+                            className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors font-medium"
+                        >
+                            Recommander la mission
+                        </button>
                     </div>
                 </div>
             )}
+
+            {/* Modal de recommandation */}
+            <MissionRecommendationModal
+                isOpen={showRecommendationModal}
+                onClose={() => setShowRecommendationModal(false)}
+                mission={selectedMission}
+            />
         </div>
     );
 }
