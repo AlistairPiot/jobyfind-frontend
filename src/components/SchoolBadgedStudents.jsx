@@ -48,9 +48,36 @@ function SchoolBadgedStudents() {
         ) {
             try {
                 await removeBadge(studentId, requestId);
-                // Rafraîchir la liste après suppression
+                // Rafraîchir la liste des étudiants badgés après suppression
                 await refreshBadgedStudents();
-                alert("Le badge a été retiré avec succès.");
+
+                // Afficher le message de confirmation et rafraîchir les recommandations après le clic
+                alert(
+                    "Le badge a été retiré avec succès. Les recommandations de missions pour cet étudiant ont également été supprimées."
+                );
+
+                console.log("🔍 Envoi d'événements de rafraîchissement...");
+                console.log("🎯 Événement 1: refreshSchoolRecommendations");
+                console.log("🎯 Événement 2: refreshRecommendedMissions");
+
+                // Envoyer des événements personnalisés pour rafraîchir les composants
+                window.dispatchEvent(
+                    new CustomEvent("refreshSchoolRecommendations")
+                );
+                window.dispatchEvent(
+                    new CustomEvent("refreshRecommendedMissions")
+                );
+
+                console.log(
+                    "✅ Événements envoyés - Vérifiez si les composants les reçoivent"
+                );
+
+                // Petit délai pour s'assurer que les événements sont traités
+                setTimeout(() => {
+                    console.log(
+                        "🕐 Délai terminé - Les composants auraient dû se rafraîchir"
+                    );
+                }, 1000);
             } catch (error) {
                 console.error("Erreur lors de la suppression du badge:", error);
                 setError(

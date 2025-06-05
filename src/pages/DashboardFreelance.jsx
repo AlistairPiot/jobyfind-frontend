@@ -80,6 +80,60 @@ function DashboardFreelance() {
         }
     }, [userId]);
 
+    // Fonction pour rafraîchir les missions recommandées
+    const refreshRecommendedMissions = async () => {
+        console.log("🔄 refreshRecommendedMissions appelée");
+        console.log("showMissions:", showMissions);
+        console.log("userId:", userId);
+
+        try {
+            const recommendedIds = await getRecommendedMissions(userId);
+            console.log("📋 Nouveaux IDs recommandés:", recommendedIds);
+            setRecommendedMissionIds(recommendedIds);
+
+            // Toujours recharger les missions pour avoir les données à jour
+            console.log(
+                "🔄 Rechargement des missions pour mise à jour des tags"
+            );
+            const missionsData = await getAllMissions();
+            console.log(
+                "📋 Missions rechargées:",
+                missionsData.length,
+                "missions"
+            );
+            setMissions(missionsData);
+        } catch (error) {
+            console.error(
+                "Erreur lors du rafraîchissement des missions recommandées:",
+                error
+            );
+        }
+    };
+
+    // Exposer la fonction de rafraîchissement globalement
+    useEffect(() => {
+        window.refreshRecommendedMissions = refreshRecommendedMissions;
+
+        // Écouter les événements personnalisés de rafraîchissement
+        const handleRefreshEvent = () => {
+            console.log("📡 Événement refreshRecommendedMissions reçu");
+            refreshRecommendedMissions();
+        };
+
+        window.addEventListener(
+            "refreshRecommendedMissions",
+            handleRefreshEvent
+        );
+
+        return () => {
+            delete window.refreshRecommendedMissions;
+            window.removeEventListener(
+                "refreshRecommendedMissions",
+                handleRefreshEvent
+            );
+        };
+    }, [userId]);
+
     // Fonction pour vérifier si l'utilisateur a déjà postulé à une mission
     const hasUserApplied = (missionId) => {
         return userApplications.some(

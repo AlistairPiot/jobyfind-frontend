@@ -37,8 +37,24 @@ function SchoolRecommendations() {
     // Exposer la fonction de rafraîchissement globalement
     useEffect(() => {
         window.refreshSchoolRecommendations = refreshRecommendations;
+
+        // Écouter les événements personnalisés de rafraîchissement
+        const handleRefreshEvent = () => {
+            console.log("📡 Événement refreshSchoolRecommendations reçu");
+            refreshRecommendations();
+        };
+
+        window.addEventListener(
+            "refreshSchoolRecommendations",
+            handleRefreshEvent
+        );
+
         return () => {
             delete window.refreshSchoolRecommendations;
+            window.removeEventListener(
+                "refreshSchoolRecommendations",
+                handleRefreshEvent
+            );
         };
     }, [userId, userRole]);
 

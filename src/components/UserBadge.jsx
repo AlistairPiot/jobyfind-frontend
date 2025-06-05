@@ -204,6 +204,20 @@ function UserBadge() {
                 setBadgeRequestId(null);
 
                 alert("Votre badge a été supprimé avec succès.");
+
+                console.log(
+                    "🔍 Badge supprimé par l'étudiant - Envoi d'événements de rafraîchissement..."
+                );
+                console.log("🎯 Événement: refreshRecommendedMissions");
+
+                // Envoyer un événement pour rafraîchir les missions recommandées dans le dashboard
+                window.dispatchEvent(
+                    new CustomEvent("refreshRecommendedMissions")
+                );
+
+                console.log(
+                    "✅ Événement envoyé - Les tags des missions devraient disparaître"
+                );
             } catch (error) {
                 console.error("Erreur lors de la suppression du badge:", error);
                 setError(
