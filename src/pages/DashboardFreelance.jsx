@@ -504,6 +504,7 @@ function DashboardFreelance() {
                     mission={selectedMission}
                     onClose={() => setShowApplicationForm(false)}
                     onSuccess={handleApplicationSuccess}
+                    isRecommended={isMissionRecommended(selectedMission.id)}
                 />
             )}
 
