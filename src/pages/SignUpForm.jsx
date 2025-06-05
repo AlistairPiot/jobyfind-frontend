@@ -116,7 +116,7 @@ function SignUpForm() {
                                             Entreprise
                                         </option>
                                         <option value="ROLE_FREELANCE">
-                                            Freelance
+                                            Etudiant
                                         </option>
                                     </select>
                                 </div>

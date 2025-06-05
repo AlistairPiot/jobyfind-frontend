@@ -161,7 +161,7 @@ function DashboardFreelance() {
         <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-blue-800 mb-6">
-                    Dashboard Freelance
+                    Dashboard Etudiant
                 </h1>
                 <div className="flex flex-wrap justify-center gap-4">
                     <button
