@@ -213,6 +213,22 @@ export const getMissionApplications = (missionId) =>
             return [];
         });
 
+// ✅ Suppression d'une candidature
+export const deleteJobApplication = (applicationId) =>
+    api
+        .delete(`/job_applications/${applicationId}`)
+        .then((res) => {
+            console.log("Candidature supprimée avec succès:", applicationId);
+            return res.data;
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la suppression de la candidature:",
+                error.response || error
+            );
+            throw error;
+        });
+
 // Mise à jour du profil utilisateur
 export const updateUserProfile = (userId, profileData) => {
     console.log("Envoi de la requête PATCH à", `/users/${userId}`);

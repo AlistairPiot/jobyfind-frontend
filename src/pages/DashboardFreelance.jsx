@@ -157,6 +157,19 @@ function DashboardFreelance() {
         setSelectedTypeFilter("");
     };
 
+    // Fonction pour recharger les candidatures (après suppression)
+    const refreshUserApplications = async () => {
+        try {
+            const applications = await getUserApplications(userId);
+            setUserApplications(applications);
+        } catch (error) {
+            console.error(
+                "Erreur lors du rechargement des candidatures:",
+                error
+            );
+        }
+    };
+
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="text-center mb-8">
@@ -509,7 +522,10 @@ function DashboardFreelance() {
             )}
 
             {showMyApplications && (
-                <MyApplications onClose={() => setShowMyApplications(false)} />
+                <MyApplications
+                    onClose={() => setShowMyApplications(false)}
+                    refreshApplications={refreshUserApplications}
+                />
             )}
         </div>
     );
