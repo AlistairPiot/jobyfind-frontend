@@ -1,14 +1,36 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import CreateMission from "../pages/CreateMission";
 import DashboardCompany from "../pages/DashboardCompany";
 import DashboardFreelance from "../pages/DashboardFreelance";
 import DashboardSchool from "../pages/DashboardSchool";
+import ErrorPage from "../pages/ErrorPage";
 import Home from "../pages/Home";
 import LoginForm from "../pages/LoginForm";
+import NotFound from "../pages/NotFound";
 import SignUpForm from "../pages/SignUpForm";
 import DashboardRouter from "../router/DashboardRoot";
+
+// Composant wrapper pour la page d'erreur avec gestion de l'état
+function ErrorPageWrapper() {
+    const location = useLocation();
+    const errorState = location.state || {};
+
+    return (
+        <ErrorPage
+            errorCode={errorState.errorCode || "500"}
+            title={errorState.title || "Erreur du serveur"}
+            message={
+                errorState.message || "Une erreur est survenue sur le serveur."
+            }
+            description={
+                errorState.description ||
+                "Veuillez réessayer plus tard ou contacter le support si le problème persiste."
+            }
+        />
+    );
+}
 
 function Root() {
     const { isAuthenticated, loading } = useAuth();
@@ -91,6 +113,15 @@ function Root() {
                     )
                 }
             />
+
+            {/* Route pour les erreurs génériques */}
+            <Route path="/error" element={<ErrorPageWrapper />} />
+
+            {/* Route spécifique pour 404 */}
+            <Route path="/404" element={<NotFound />} />
+
+            {/* Route catch-all pour les pages non trouvées - doit être en dernier */}
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 }

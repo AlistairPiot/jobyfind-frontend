@@ -427,3 +427,19 @@ export const getSchoolRecommendations = (schoolId) =>
             );
             return [];
         });
+
+// Exemple d'utilisation du gestionnaire d'erreur :
+//
+// import useErrorHandler from '../hooks/useErrorHandler';
+//
+// Dans votre composant :
+// const { handleError } = useErrorHandler();
+//
+// Dans votre appel API :
+// try {
+//     const data = await getUserApplications(userId);
+//     return data;
+// } catch (error) {
+//     handleError(error, 'Impossible de charger vos candidatures');
+//     throw error; // Re-throw si nécessaire
+// }
