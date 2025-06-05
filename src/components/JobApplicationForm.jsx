@@ -1,41 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { createJobApplication } from "../services/api";
+import { createJobApplication, getUserById } from "../services/api";
+import ProfileModal from "./ProfileModal";
 import StripePayment from "./StripePayment";
 
 function JobApplicationForm({ mission, onClose, onSuccess }) {
     const { userId } = useAuth();
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        contactEmail: "",
-    });
+    const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [showPayment, setShowPayment] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+    useEffect(() => {
+        const checkUserProfile = async () => {
+            try {
+                const userData = await getUserById(userId);
+                setUser(userData);
 
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
-        // Valider le formulaire avant de passer au paiement
-        if (
-            !formData.firstName ||
-            !formData.lastName ||
-            !formData.contactEmail
-        ) {
-            setError("Veuillez remplir tous les champs");
-            return;
-        }
-        setError(null);
-        setShowPayment(true);
-    };
+                // Vérifier si le profil est complet (prénom et nom)
+                if (userData.firstName && userData.lastName) {
+                    // Profil complet, aller directement au paiement
+                    setShowPayment(true);
+                } else {
+                    // Profil incomplet, afficher un message d'erreur
+                    setError(
+                        "Votre profil est incomplet. Vous devez renseigner votre prénom et nom pour postuler."
+                    );
+                }
+            } catch {
+                setError("Erreur lors de la vérification de votre profil.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        checkUserProfile();
+    }, [userId]);
 
     const handlePaymentSuccess = async () => {
         setLoading(true);
@@ -45,7 +46,9 @@ function JobApplicationForm({ mission, onClose, onSuccess }) {
             await createJobApplication({
                 user: `/api/users/${userId}`,
                 missions: [`/api/missions/${mission.id}`],
-                ...formData,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                contactEmail: user.email,
             });
             onSuccess();
             onClose();
@@ -59,8 +62,54 @@ function JobApplicationForm({ mission, onClose, onSuccess }) {
     };
 
     const handlePaymentCancel = () => {
-        setShowPayment(false);
+        onClose();
     };
+
+    const handleProfileUpdate = () => {
+        // Fermer le modal de profil et revérifier le profil utilisateur
+        setShowProfileModal(false);
+        setLoading(true);
+
+        // Relancer la vérification du profil
+        const recheckProfile = async () => {
+            try {
+                const userData = await getUserById(userId);
+                setUser(userData);
+
+                if (userData.firstName && userData.lastName) {
+                    setError(null);
+                    setShowPayment(true);
+                } else {
+                    setError(
+                        "Votre profil est toujours incomplet. Veuillez renseigner votre prénom et nom."
+                    );
+                }
+            } catch {
+                setError("Erreur lors de la vérification de votre profil.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        recheckProfile();
+    };
+
+    if (loading) {
+        return (
+            <div className="absolute inset-x-0 top-0 bg-white rounded-lg shadow-lg p-6 mb-8 mt-8 max-w-md mx-auto">
+                <div className="flex justify-center items-center h-32">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+                    <p className="ml-4 text-gray-600">
+                        Vérification du profil...
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (showProfileModal) {
+        return <ProfileModal onClose={handleProfileUpdate} />;
+    }
 
     if (showPayment) {
         return (
@@ -88,111 +137,46 @@ function JobApplicationForm({ mission, onClose, onSuccess }) {
                 </button>
             </div>
 
-            <form onSubmit={handleFormSubmit} className="space-y-4">
-                <div>
-                    <label
-                        htmlFor="firstName"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Prénom
-                    </label>
-                    <input
-                        type="text"
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        required
-                        className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                </div>
-                <div>
-                    <label
-                        htmlFor="lastName"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Nom
-                    </label>
-                    <input
-                        type="text"
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        required
-                        className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                </div>
-                <div>
-                    <label
-                        htmlFor="contactEmail"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Email de contact
-                    </label>
-                    <input
-                        type="email"
-                        id="contactEmail"
-                        name="contactEmail"
-                        value={formData.contactEmail}
-                        onChange={handleChange}
-                        required
-                        className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                </div>
-
-                <div className="bg-yellow-50 p-4 rounded-lg">
+            {error && (
+                <div className="bg-red-50 p-4 rounded-lg mb-4">
                     <div className="flex items-center">
                         <svg
-                            className="h-5 w-5 text-yellow-400 mr-2"
+                            className="h-5 w-5 text-red-400 mr-2"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                         >
                             <path
                                 fillRule="evenodd"
-                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                                 clipRule="evenodd"
                             />
                         </svg>
                         <div>
-                            <p className="text-sm font-medium text-yellow-800">
-                                Paiement requis
+                            <p className="text-sm font-medium text-red-800">
+                                Profil incomplet
                             </p>
-                            <p className="text-sm text-yellow-700">
-                                Un paiement de 2,00 € sera requis pour finaliser
-                                votre candidature.
-                            </p>
+                            <p className="text-sm text-red-700 mt-1">{error}</p>
                         </div>
                     </div>
                 </div>
+            )}
 
+            <div className="flex justify-end space-x-3 mt-6">
+                <button
+                    onClick={onClose}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                    Fermer
+                </button>
                 {error && (
-                    <div className="bg-red-50 p-3 rounded-lg">
-                        <p className="text-sm text-red-600 text-center">
-                            {error}
-                        </p>
-                    </div>
+                    <button
+                        onClick={() => setShowProfileModal(true)}
+                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                    >
+                        Compléter mon profil
+                    </button>
                 )}
-
-                <div className="flex justify-end space-x-3 mt-6">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                    >
-                        Annuler
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-                    >
-                        {loading
-                            ? "Envoi en cours..."
-                            : "Continuer vers le paiement"}
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     );
 }
