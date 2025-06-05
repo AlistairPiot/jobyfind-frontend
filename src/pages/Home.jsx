@@ -7,7 +7,7 @@ function Home() {
                 </h1>
                 <p className="text-xl text-gray-600 mb-12 mx-auto max-w-2xl">
                     La plateforme qui connecte les écoles, les entreprises et
-                    les freelances pour des opportunités professionnelles.
+                    les étudiants pour des opportunités professionnelles.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                     <a

@@ -117,10 +117,10 @@ function MissionRecommendationModal({ isOpen, onClose, mission }) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col border border-gray-300">
                 {/* En-tête */}
-                <div className="border-b p-6">
+                <div className="border-b p-6 flex-shrink-0">
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-semibold text-gray-800">
                             Recommander la mission
@@ -159,8 +159,8 @@ function MissionRecommendationModal({ isOpen, onClose, mission }) {
                     )}
                 </div>
 
-                {/* Contenu */}
-                <div className="p-6 overflow-y-auto max-h-96">
+                {/* Contenu - Zone scrollable */}
+                <div className="flex-1 overflow-y-auto p-6">
                     {/* Message de retour */}
                     {message.text && (
                         <div
@@ -208,7 +208,7 @@ function MissionRecommendationModal({ isOpen, onClose, mission }) {
                                 </button>
                             </div>
 
-                            <div className="space-y-2 max-h-64 overflow-y-auto">
+                            <div className="space-y-2">
                                 {students.map((student) => (
                                     <div
                                         key={student.id}
@@ -258,7 +258,7 @@ function MissionRecommendationModal({ isOpen, onClose, mission }) {
                 </div>
 
                 {/* Pied de page */}
-                <div className="border-t p-6 flex justify-end space-x-3">
+                <div className="border-t p-6 flex justify-end space-x-3 flex-shrink-0">
                     <button
                         onClick={handleClose}
                         className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
