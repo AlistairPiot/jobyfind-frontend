@@ -12,6 +12,19 @@ function MyApplications({ onClose }) {
         const fetchApplications = async () => {
             try {
                 const data = await getUserApplications(userId);
+                console.log("Candidatures avec groupes mission:read:", data);
+                if (data.length > 0 && data[1]) {
+                    console.log("Candidature 2 (mission 21):", data[1]);
+                    if (data[1].missions && data[1].missions[0]) {
+                        console.log("Mission 21:", data[1].missions[0]);
+                        if (data[1].missions[0].user) {
+                            console.log(
+                                "Utilisateur mission 21:",
+                                data[1].missions[0].user
+                            );
+                        }
+                    }
+                }
                 setApplications(data);
             } catch {
                 setError("Erreur lors de la récupération de vos candidatures");
@@ -85,9 +98,25 @@ function MyApplications({ onClose }) {
                             <div className="flex justify-between items-start">
                                 <div>
                                     <h3 className="font-semibold text-lg text-gray-800">
-                                        {application.missions[0]?.name ||
-                                            "Mission non disponible"}
+                                        {application.missions &&
+                                        application.missions.length > 0
+                                            ? application.missions[0].name
+                                            : "Mission non disponible"}
                                     </h3>
+
+                                    {/* Nom de l'entreprise - seulement si la mission et l'utilisateur existent */}
+                                    {application.missions &&
+                                        application.missions.length > 0 &&
+                                        application.missions[0].user
+                                            ?.nameCompany && (
+                                            <p className="text-sm text-gray-700 font-medium mt-1">
+                                                {
+                                                    application.missions[0].user
+                                                        .nameCompany
+                                                }
+                                            </p>
+                                        )}
+
                                     <p className="text-sm text-gray-600 mt-1">
                                         Postulé le{" "}
                                         {formatDate(application.DateApplied)}
@@ -105,11 +134,14 @@ function MyApplications({ onClose }) {
                                         : "Refusée"}
                                 </span>
                             </div>
-                            {application.missions[0]?.type && (
-                                <p className="text-sm text-gray-600 mt-2">
-                                    Type : {application.missions[0].type.name}
-                                </p>
-                            )}
+                            {application.missions &&
+                                application.missions.length > 0 &&
+                                application.missions[0].type && (
+                                    <p className="text-sm text-gray-600 mt-2">
+                                        Type :{" "}
+                                        {application.missions[0].type.name}
+                                    </p>
+                                )}
                         </div>
                     ))}
                 </div>

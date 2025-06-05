@@ -181,7 +181,9 @@ export const createJobApplication = (applicationData) =>
 // ✅ Récupération des candidatures d'un utilisateur
 export const getUserApplications = (userId) =>
     api
-        .get(`/job_applications?user.id=${userId}`)
+        .get(
+            `/job_applications?user.id=${userId}&groups[]=job_application:read&groups[]=user:read&groups[]=mission:read`
+        )
         .then((res) => {
             return res.data["member"] || [];
         })
