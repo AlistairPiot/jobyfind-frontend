@@ -1,123 +1,134 @@
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 
-function useErrorHandler() {
-    const navigate = useNavigate();
+const useErrorHandler = () => {
+    // Extraire les messages d'erreur de validation depuis la réponse API Symfony
+    const extractValidationErrors = useCallback((error) => {
+        if (error.response && error.response.data) {
+            const data = error.response.data;
 
+            // Format d'erreur Symfony Validator
+            if (data.violations && Array.isArray(data.violations)) {
+                const validationErrors = {};
+                data.violations.forEach((violation) => {
+                    const field = violation.propertyPath;
+                    const message = violation.message;
+                    validationErrors[field] = message;
+                });
+                return validationErrors;
+            }
+
+            // Format d'erreur API Platform
+            if (data["hydra:description"]) {
+                return { general: data["hydra:description"] };
+            }
+
+            // Message d'erreur simple
+            if (data.message) {
+                return { general: data.message };
+            }
+        }
+
+        return null;
+    }, []);
+
+    // Gérer les erreurs avec extraction des messages de validation
     const handleError = useCallback(
-        (error, customMessage = null) => {
-            console.error("API Error:", error);
+        (error, defaultMessage = "Une erreur est survenue") => {
+            console.error("Erreur détectée:", error);
 
-            // Déterminer le type d'erreur et naviguer vers la page appropriée
+            const validationErrors = extractValidationErrors(error);
+
+            if (validationErrors) {
+                // Si on a des erreurs de validation spécifiques, les retourner
+                return {
+                    type: "validation",
+                    errors: validationErrors,
+                    message: "Veuillez corriger les erreurs de validation.",
+                };
+            }
+
+            // Sinon, retourner l'erreur générale
+            return {
+                type: "general",
+                message: defaultMessage,
+            };
+        },
+        [extractValidationErrors]
+    );
+
+    // Vérifier si une erreur est liée à la validation
+    const isValidationError = useCallback(
+        (error) => {
+            return extractValidationErrors(error) !== null;
+        },
+        [extractValidationErrors]
+    );
+
+    // Obtenir un message d'erreur utilisateur-friendly
+    const getErrorMessage = useCallback(
+        (error, defaultMessage = "Une erreur est survenue") => {
             if (error.response) {
                 const status = error.response.status;
+                const data = error.response.data;
 
                 switch (status) {
+                    case 400:
+                        if (data.violations) {
+                            return "Les données saisies ne sont pas valides.";
+                        }
+                        return data.message || "Données invalides.";
+
                     case 401:
-                        // Non autorisé - rediriger vers la page de connexion
-                        navigate("/login", {
-                            state: {
-                                message:
-                                    "Votre session a expiré. Veuillez vous reconnecter.",
-                            },
-                        });
-                        break;
+                        return "Vous n'êtes pas autorisé à effectuer cette action.";
 
                     case 403:
-                        // Accès interdit
-                        navigate("/error", {
-                            state: {
-                                errorCode: "403",
-                                title: "Accès interdit",
-                                message:
-                                    "Vous n'avez pas les permissions nécessaires pour accéder à cette ressource.",
-                                description:
-                                    "Contactez votre administrateur si vous pensez que c'est une erreur.",
-                            },
-                        });
-                        break;
+                        return "Accès refusé.";
 
                     case 404:
-                        // Ressource non trouvée
-                        navigate("/404");
-                        break;
+                        return "Ressource non trouvée.";
+
+                    case 422:
+                        return "Les données envoyées ne peuvent pas être traitées.";
 
                     case 500:
-                    case 502:
-                    case 503:
-                        // Erreurs serveur
-                        navigate("/error", {
-                            state: {
-                                errorCode: status.toString(),
-                                title: "Erreur du serveur",
-                                message:
-                                    customMessage ||
-                                    "Une erreur est survenue sur le serveur.",
-                                description:
-                                    "Nos équipes techniques ont été notifiées. Veuillez réessayer plus tard.",
-                            },
-                        });
-                        break;
+                        return "Erreur interne du serveur. Veuillez réessayer plus tard.";
 
                     default:
-                        // Autres erreurs HTTP
-                        navigate("/error", {
-                            state: {
-                                errorCode: status.toString(),
-                                title: "Erreur",
-                                message:
-                                    customMessage ||
-                                    error.response.data?.message ||
-                                    "Une erreur inattendue s'est produite.",
-                                description:
-                                    "Veuillez réessayer ou contacter le support si le problème persiste.",
-                            },
-                        });
+                        return data.message || defaultMessage;
                 }
-            } else if (error.request) {
-                // Erreur de réseau
-                navigate("/error", {
-                    state: {
-                        errorCode: "NETWORK",
-                        title: "Erreur de connexion",
-                        message: "Impossible de se connecter au serveur.",
-                        description:
-                            "Vérifiez votre connexion internet et réessayez.",
-                    },
-                });
-            } else {
-                // Erreur lors de la configuration de la requête
-                navigate("/error", {
-                    state: {
-                        errorCode: "REQUEST",
-                        title: "Erreur de requête",
-                        message:
-                            customMessage ||
-                            "Une erreur est survenue lors de la préparation de la requête.",
-                        description:
-                            "Veuillez réessayer ou contacter le support.",
-                    },
-                });
             }
+
+            if (error.request) {
+                return "Impossible de contacter le serveur. Vérifiez votre connexion internet.";
+            }
+
+            return error.message || defaultMessage;
         },
-        [navigate]
+        []
     );
 
     // Fonction pour afficher un message d'erreur sans redirection
-    const showError = useCallback((message) => {
-        // Ici vous pourriez utiliser un toast ou un système de notification
-        console.error("User Error:", message);
+    const showError = useCallback((message, type = "error") => {
+        // Cette fonction peut être utilisée pour afficher des notifications
+        console.error(`[${type.toUpperCase()}]:`, message);
 
-        // Pour l'instant, on utilise une alerte simple
-        // Dans une vraie application, vous pourriez utiliser une library comme react-hot-toast
-        alert(message);
+        // Ici on pourrait intégrer avec une bibliothèque de notifications
+        // comme react-toastify, react-hot-toast, etc.
 
-        return () => {
-            // Cleanup si nécessaire
+        return {
+            type,
+            message,
+            timestamp: new Date().toISOString(),
         };
     }, []);
 
-    return { handleError, showError };
-}
+    return {
+        handleError,
+        extractValidationErrors,
+        isValidationError,
+        getErrorMessage,
+        showError,
+    };
+};
 
 export default useErrorHandler;

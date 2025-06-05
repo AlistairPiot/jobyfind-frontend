@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import useErrorHandler from "../hooks/useErrorHandler";
+import useValidation from "../hooks/useValidation";
 import { getUserById, updateUserProfile } from "../services/api";
+import InputField from "./InputField";
 import UserBadge from "./UserBadge";
 
 function ProfileModal({ onClose }) {
@@ -18,6 +21,14 @@ function ProfileModal({ onClose }) {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
+    const [touchedFields, setTouchedFields] = useState(new Set());
+
+    // Hook de validation
+    const { validateRealTime, validateAll, getError, clearErrors } =
+        useValidation();
+
+    // Hook de gestion d'erreurs
+    const { handleError } = useErrorHandler();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -31,6 +42,9 @@ function ProfileModal({ onClose }) {
                         nameCompany: userData.nameCompany || "",
                         nameSchool: userData.nameSchool || "",
                     });
+
+                    // Effacer toutes les erreurs après le chargement des données
+                    clearErrors();
                 }
             } catch (err) {
                 console.error("Erreur lors du chargement du profil:", err);
@@ -43,106 +57,117 @@ function ProfileModal({ onClose }) {
         if (userId) {
             fetchUserData();
         }
-    }, [userId]);
+    }, [userId, clearErrors]);
+
+    // Gérer les changements avec validation en temps réel
+    const handleInputChange = (fieldName, value) => {
+        setProfileData((prev) => ({
+            ...prev,
+            [fieldName]: value,
+        }));
+
+        // Marquer le champ comme touché
+        setTouchedFields((prev) => new Set(prev).add(fieldName));
+
+        // Validation en temps réel seulement pour les champs touchés
+        validateRealTime(fieldName, value);
+    };
+
+    // Gérer le blur (perte de focus) avec validation
+    const handleFieldBlur = (fieldName, value) => {
+        // Marquer le champ comme touché
+        setTouchedFields((prev) => new Set(prev).add(fieldName));
+
+        // Valider le champ
+        validateRealTime(fieldName, value);
+    };
+
+    // Vérifier si on a des erreurs sur les champs touchés uniquement
+    const hasRelevantErrors = () => {
+        const errors = {};
+        touchedFields.forEach((fieldName) => {
+            const error = getError(fieldName);
+            if (error) {
+                errors[fieldName] = error;
+            }
+        });
+        return Object.keys(errors).length > 0;
+    };
 
     // Définir le libellé et les champs en fonction du rôle utilisateur
     const getRoleSpecificFields = () => {
         switch (userRole) {
             case "ROLE_SCHOOL":
                 return (
-                    <div>
-                        <label
-                            htmlFor="nameSchool"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                            Nom de l'école
-                        </label>
-                        <input
-                            type="text"
-                            id="nameSchool"
-                            value={profileData.nameSchool}
-                            onChange={(e) =>
-                                setProfileData({
-                                    ...profileData,
-                                    nameSchool: e.target.value,
-                                })
-                            }
-                            required
-                            className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Entrez le nom de l'école"
-                        />
-                    </div>
+                    <InputField
+                        id="nameSchool"
+                        label="Nom de l'école"
+                        value={profileData.nameSchool}
+                        onChange={(e) =>
+                            handleInputChange("nameSchool", e.target.value)
+                        }
+                        onBlur={(e) =>
+                            handleFieldBlur("nameSchool", e.target.value)
+                        }
+                        placeholder="Entrez le nom de l'école"
+                        required
+                        error={getError("nameSchool")}
+                    />
                 );
+
             case "ROLE_COMPANY":
                 return (
-                    <div>
-                        <label
-                            htmlFor="nameCompany"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                            Nom de l'entreprise
-                        </label>
-                        <input
-                            type="text"
-                            id="nameCompany"
-                            value={profileData.nameCompany}
-                            onChange={(e) =>
-                                setProfileData({
-                                    ...profileData,
-                                    nameCompany: e.target.value,
-                                })
-                            }
-                            required
-                            className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Entrez le nom de l'entreprise"
-                        />
-                    </div>
+                    <InputField
+                        id="nameCompany"
+                        label="Nom de l'entreprise"
+                        value={profileData.nameCompany}
+                        onChange={(e) =>
+                            handleInputChange("nameCompany", e.target.value)
+                        }
+                        onBlur={(e) =>
+                            handleFieldBlur("nameCompany", e.target.value)
+                        }
+                        placeholder="Entrez le nom de l'entreprise"
+                        required
+                        error={getError("nameCompany")}
+                    />
                 );
+
             case "ROLE_FREELANCE":
                 return (
                     <>
-                        <div>
-                            <label
-                                htmlFor="firstName"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
-                                Prénom
-                            </label>
-                            <input
-                                type="text"
-                                id="firstName"
-                                value={profileData.firstName}
-                                onChange={(e) =>
-                                    setProfileData({
-                                        ...profileData,
-                                        firstName: e.target.value,
-                                    })
-                                }
-                                required
-                                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Entrez votre prénom"
-                            />
-                        </div>
+                        <InputField
+                            id="firstName"
+                            label="Prénom"
+                            value={profileData.firstName}
+                            onChange={(e) =>
+                                handleInputChange("firstName", e.target.value)
+                            }
+                            onBlur={(e) =>
+                                handleFieldBlur("firstName", e.target.value)
+                            }
+                            placeholder="Entrez votre prénom"
+                            required
+                            error={getError("firstName")}
+                        />
+
                         <div className="mt-4">
-                            <label
-                                htmlFor="lastName"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
-                                Nom
-                            </label>
-                            <input
-                                type="text"
+                            <InputField
                                 id="lastName"
+                                label="Nom"
                                 value={profileData.lastName}
                                 onChange={(e) =>
-                                    setProfileData({
-                                        ...profileData,
-                                        lastName: e.target.value,
-                                    })
+                                    handleInputChange(
+                                        "lastName",
+                                        e.target.value
+                                    )
                                 }
-                                required
-                                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                onBlur={(e) =>
+                                    handleFieldBlur("lastName", e.target.value)
+                                }
                                 placeholder="Entrez votre nom"
+                                required
+                                error={getError("lastName")}
                             />
                         </div>
                     </>
@@ -166,20 +191,10 @@ function ProfileModal({ onClose }) {
                 case "ROLE_SCHOOL":
                     dataToUpdate = { nameSchool: profileData.nameSchool };
                     displayName = profileData.nameSchool;
-                    // Solution temporaire en attendant la mise à jour du backend
-                    localStorage.setItem(
-                        "userNameSchool",
-                        profileData.nameSchool
-                    );
                     break;
                 case "ROLE_COMPANY":
                     dataToUpdate = { nameCompany: profileData.nameCompany };
                     displayName = profileData.nameCompany;
-                    // Solution temporaire en attendant la mise à jour du backend
-                    localStorage.setItem(
-                        "userNameCompany",
-                        profileData.nameCompany
-                    );
                     break;
                 case "ROLE_FREELANCE":
                     dataToUpdate = {
@@ -188,15 +203,17 @@ function ProfileModal({ onClose }) {
                     };
                     displayName =
                         `${profileData.firstName} ${profileData.lastName}`.trim();
-                    // Solution temporaire en attendant la mise à jour du backend
-                    localStorage.setItem(
-                        "userFirstName",
-                        profileData.firstName
-                    );
-                    localStorage.setItem("userLastName", profileData.lastName);
                     break;
                 default:
                     break;
+            }
+
+            // Valider toutes les données avant envoi
+            const isValid = validateAll(dataToUpdate);
+            if (!isValid) {
+                setError("Veuillez corriger les erreurs avant de continuer.");
+                setSaving(false);
+                return;
             }
 
             console.log("Données envoyées à l'API:", dataToUpdate);
@@ -205,18 +222,22 @@ function ProfileModal({ onClose }) {
                 // Tenter de mettre à jour le profil utilisateur via l'API
                 const response = await updateUserProfile(userId, dataToUpdate);
                 console.log("Réponse de l'API:", response);
+
+                // Effacer les erreurs de validation après succès
+                clearErrors();
+
+                // Mettre à jour le contexte d'authentification
+                updateAuthProfile(displayName);
+
+                onClose();
             } catch (apiError) {
-                console.warn(
-                    "La mise à jour via l'API a échoué, mais les données sont sauvegardées localement:",
-                    apiError
+                console.error("Erreur API:", apiError);
+                // Utiliser le gestionnaire d'erreurs pour traiter l'erreur API
+                handleError(
+                    apiError,
+                    "Erreur lors de la mise à jour du profil"
                 );
-                // On continue car on a une solution de secours avec localStorage
             }
-
-            // Mettre à jour le contexte d'authentification
-            updateAuthProfile(displayName);
-
-            onClose();
         } catch (err) {
             setError("Erreur lors de la mise à jour du profil");
             console.error("Erreur profil:", err);
@@ -256,41 +277,68 @@ function ProfileModal({ onClose }) {
                 </div>
 
                 {error && (
-                    <p className="text-red-600 text-center mb-4">{error}</p>
+                    <div className="bg-red-50 p-4 rounded-lg mb-4">
+                        <div className="flex items-center">
+                            <svg
+                                className="h-5 w-5 text-red-400 mr-2"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clipRule="evenodd"
+                                />
+                            </svg>
+                            <p className="text-red-600 text-sm">{error}</p>
+                        </div>
+                    </div>
                 )}
 
-                {loading ? (
-                    <div className="flex justify-center items-center h-40">
-                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600"></div>
-                        <p className="ml-4 text-gray-600">
-                            Chargement du profil...
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {getRoleSpecificFields()}
+
+                    <div className="flex justify-center mt-6">
+                        <button
+                            type="submit"
+                            disabled={saving || hasRelevantErrors()}
+                            className={`px-6 py-3 font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 shadow-md ${
+                                saving || hasRelevantErrors()
+                                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                                    : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+                            }`}
+                        >
+                            {saving ? "Enregistrement..." : "Enregistrer"}
+                        </button>
+                    </div>
+                </form>
+
+                {/* Message d'aide pour les validations */}
+                {hasRelevantErrors() && (
+                    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <p className="text-yellow-800 text-sm flex items-center">
+                            <svg
+                                className="h-4 w-4 mr-2"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                    clipRule="evenodd"
+                                />
+                            </svg>
+                            Veuillez corriger les erreurs ci-dessus avant de
+                            continuer.
                         </p>
                     </div>
-                ) : (
-                    <>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            {getRoleSpecificFields()}
+                )}
 
-                            <div className="flex justify-center mt-6">
-                                <button
-                                    type="submit"
-                                    disabled={saving}
-                                    className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md disabled:opacity-50"
-                                >
-                                    {saving
-                                        ? "Enregistrement..."
-                                        : "Enregistrer"}
-                                </button>
-                            </div>
-                        </form>
-
-                        {/* Afficher le composant de badge pour les freelances */}
-                        {userRole === "ROLE_FREELANCE" && (
-                            <div className="mt-8 pt-6 border-t border-gray-200">
-                                <UserBadge />
-                            </div>
-                        )}
-                    </>
+                {/* Afficher le composant de badge pour les freelances */}
+                {userRole === "ROLE_FREELANCE" && (
+                    <div className="mt-8 pt-6 border-t border-gray-200">
+                        <UserBadge />
+                    </div>
                 )}
             </div>
         </div>
