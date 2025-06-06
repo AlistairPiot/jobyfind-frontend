@@ -111,10 +111,6 @@ function SchoolBadgeRequests() {
             ) : (
                 <div className="space-y-4">
                     {requests.map((request) => {
-                        const userId = request.user
-                            ? request.user.split("/").pop()
-                            : null;
-
                         return (
                             <div
                                 key={request.id}
@@ -123,10 +119,17 @@ function SchoolBadgeRequests() {
                                 <div className="flex justify-between items-start">
                                     <div className="flex-1">
                                         <h3 className="font-medium text-gray-800">
-                                            Demande de badge #{request.id}
+                                            Demande de badge
                                         </h3>
                                         <p className="text-sm text-gray-600 mt-1">
-                                            Utilisateur ID: {userId}
+                                            {request.user &&
+                                            request.user.firstName &&
+                                            request.user.lastName
+                                                ? `${request.user.firstName} ${request.user.lastName}`
+                                                : request.user &&
+                                                  request.user.email
+                                                ? request.user.email
+                                                : "Utilisateur inconnu"}
                                         </p>
                                         <p className="text-sm text-gray-600">
                                             Date de demande:{" "}
