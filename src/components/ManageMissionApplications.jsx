@@ -56,86 +56,102 @@ function ManageMissionApplications({ mission, onClose }) {
         });
     };
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-32">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
-                <p className="ml-4 text-gray-600">
-                    Chargement des candidatures...
-                </p>
-            </div>
-        );
-    }
-
     return (
-        <div>
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-800">
-                        Candidatures pour la mission
-                    </h2>
-                    <h3 className="text-lg text-gray-600 mt-1">
-                        {mission.name}
-                    </h3>
+        <>
+            {/* En-tête fixe */}
+            <div className="border-b p-6 flex-shrink-0">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-800">
+                            Candidatures pour la mission
+                        </h2>
+                        <h3 className="text-lg text-gray-600 mt-1">
+                            {mission.name}
+                        </h3>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                        <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
                 </div>
-                <button
-                    onClick={onClose}
-                    className="text-gray-500 hover:text-gray-700"
-                >
-                    ✕
-                </button>
             </div>
 
-            {error ? (
-                <p className="text-red-600 text-center py-4">{error}</p>
-            ) : applications.length === 0 ? (
-                <p className="text-gray-600 text-center py-8">
-                    Aucune candidature reçue pour cette mission.
-                </p>
-            ) : (
-                <div className="space-y-4">
-                    {applications.map((application) => (
-                        <div
-                            key={application.id}
-                            className="border rounded-lg p-4 shadow-sm"
-                        >
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h3 className="font-semibold text-lg text-gray-800">
-                                        {application.user.firstName}{" "}
-                                        {application.user.lastName}
-                                    </h3>
-                                    <p className="text-sm text-gray-600 mt-1">
-                                        Email : {application.user.email}
-                                    </p>
-                                    {application.user.contactEmail && (
+            {/* Zone de contenu avec scroll */}
+            <div className="flex-1 overflow-y-auto p-6">
+                {loading ? (
+                    <div className="flex justify-center items-center h-32">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+                        <p className="ml-4 text-gray-600">
+                            Chargement des candidatures...
+                        </p>
+                    </div>
+                ) : error ? (
+                    <p className="text-red-600 text-center py-4">{error}</p>
+                ) : applications.length === 0 ? (
+                    <p className="text-gray-600 text-center py-8">
+                        Aucune candidature reçue pour cette mission.
+                    </p>
+                ) : (
+                    <div className="space-y-4">
+                        {applications.map((application) => (
+                            <div
+                                key={application.id}
+                                className="border rounded-lg p-4 shadow-sm"
+                            >
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h3 className="font-semibold text-lg text-gray-800">
+                                            {application.user.firstName}{" "}
+                                            {application.user.lastName}
+                                        </h3>
                                         <p className="text-sm text-gray-600 mt-1">
-                                            Email de contact :{" "}
-                                            {application.user.contactEmail}
+                                            Email : {application.user.email}
                                         </p>
-                                    )}
-                                    <p className="text-sm text-gray-600 mt-1">
-                                        Postulé le{" "}
-                                        {formatDate(application.DateApplied)}
-                                    </p>
+                                        {application.user.contactEmail && (
+                                            <p className="text-sm text-gray-600 mt-1">
+                                                Email de contact :{" "}
+                                                {application.user.contactEmail}
+                                            </p>
+                                        )}
+                                        <p className="text-sm text-gray-600 mt-1">
+                                            Postulé le{" "}
+                                            {formatDate(
+                                                application.DateApplied
+                                            )}
+                                        </p>
+                                    </div>
+                                    <span
+                                        className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
+                                            application.status
+                                        )}`}
+                                    >
+                                        {application.status === "PENDING"
+                                            ? "En attente"
+                                            : application.status === "ACCEPTED"
+                                            ? "Acceptée"
+                                            : "Refusée"}
+                                    </span>
                                 </div>
-                                <span
-                                    className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
-                                        application.status
-                                    )}`}
-                                >
-                                    {application.status === "PENDING"
-                                        ? "En attente"
-                                        : application.status === "ACCEPTED"
-                                        ? "Acceptée"
-                                        : "Refusée"}
-                                </span>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </>
     );
 }
 
