@@ -229,6 +229,35 @@ export const deleteJobApplication = (applicationId) =>
             throw error;
         });
 
+// ✅ Mise à jour du statut d'une candidature
+export const updateJobApplicationStatus = (applicationId, status) =>
+    api
+        .patch(
+            `/job_applications/${applicationId}`,
+            {
+                status: status,
+            },
+            {
+                headers: {
+                    "Content-Type": "application/merge-patch+json",
+                },
+            }
+        )
+        .then((res) => {
+            console.log(
+                `Candidature ${applicationId} mise à jour avec le statut:`,
+                status
+            );
+            return res.data;
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la mise à jour de la candidature:",
+                error.response || error
+            );
+            throw error;
+        });
+
 // Mise à jour du profil utilisateur
 export const updateUserProfile = (userId, profileData) => {
     console.log("Envoi de la requête PATCH à", `/users/${userId}`);

@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import { getMissionApplications } from "../services/api";
+import {
+    getMissionApplications,
+    updateJobApplicationStatus,
+} from "../services/api";
 
-function ManageMissionApplications({ mission, onClose }) {
+function ManageMissionApplications({ mission, onClose, onStatusUpdate }) {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [updatingId, setUpdatingId] = useState(null);
 
     useEffect(() => {
         const fetchApplications = async () => {
@@ -34,6 +38,36 @@ function ManageMissionApplications({ mission, onClose }) {
 
         fetchApplications();
     }, [mission.id]);
+
+    const handleUpdateStatus = async (applicationId, newStatus) => {
+        setUpdatingId(applicationId);
+        try {
+            await updateJobApplicationStatus(applicationId, newStatus);
+
+            // Mettre à jour l'état local
+            setApplications(
+                applications.map((app) =>
+                    app.id === applicationId
+                        ? { ...app, status: newStatus }
+                        : app
+                )
+            );
+
+            const statusText =
+                newStatus === "ACCEPTED" ? "acceptée" : "refusée";
+            alert(`Candidature ${statusText} avec succès !`);
+
+            // Notifier le composant parent pour rafraîchir les missions acceptées
+            if (onStatusUpdate) {
+                onStatusUpdate();
+            }
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour:", error);
+            alert("Erreur lors de la mise à jour de la candidature");
+        } finally {
+            setUpdatingId(null);
+        }
+    };
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -134,17 +168,72 @@ function ManageMissionApplications({ mission, onClose }) {
                                             )}
                                         </p>
                                     </div>
-                                    <span
-                                        className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
-                                            application.status
-                                        )}`}
-                                    >
-                                        {application.status === "PENDING"
-                                            ? "En attente"
-                                            : application.status === "ACCEPTED"
-                                            ? "Acceptée"
-                                            : "Refusée"}
-                                    </span>
+                                    <div className="flex flex-col items-end space-y-2">
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
+                                                application.status
+                                            )}`}
+                                        >
+                                            {application.status === "PENDING"
+                                                ? "En attente"
+                                                : application.status ===
+                                                  "ACCEPTED"
+                                                ? "Acceptée"
+                                                : "Refusée"}
+                                        </span>
+
+                                        {/* Boutons d'action pour les candidatures en attente */}
+                                        {application.status === "PENDING" && (
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={() =>
+                                                        handleUpdateStatus(
+                                                            application.id,
+                                                            "ACCEPTED"
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        updatingId ===
+                                                        application.id
+                                                    }
+                                                    className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                                                        updatingId ===
+                                                        application.id
+                                                            ? "bg-gray-200 cursor-not-allowed"
+                                                            : "bg-green-100 text-green-700 hover:bg-green-200"
+                                                    }`}
+                                                >
+                                                    {updatingId ===
+                                                    application.id
+                                                        ? "..."
+                                                        : "Valider la candidature"}
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        handleUpdateStatus(
+                                                            application.id,
+                                                            "REJECTED"
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        updatingId ===
+                                                        application.id
+                                                    }
+                                                    className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                                                        updatingId ===
+                                                        application.id
+                                                            ? "bg-gray-200 cursor-not-allowed"
+                                                            : "bg-red-100 text-red-700 hover:bg-red-200"
+                                                    }`}
+                                                >
+                                                    {updatingId ===
+                                                    application.id
+                                                        ? "..."
+                                                        : "Refuser"}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}
