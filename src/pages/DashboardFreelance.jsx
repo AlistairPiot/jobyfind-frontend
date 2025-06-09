@@ -4,7 +4,7 @@ import MyApplications from "../components/MyApplications";
 import UserBadge from "../components/UserBadge";
 import { useAuth } from "../context/AuthContext";
 import {
-    getAllMissions,
+    getAvailableMissions,
     getRecommendedMissions,
     getTypes,
     getUserApplications,
@@ -95,7 +95,7 @@ function DashboardFreelance() {
             console.log(
                 "🔄 Rechargement des missions pour mise à jour des tags"
             );
-            const missionsData = await getAllMissions();
+            const missionsData = await getAvailableMissions();
             console.log(
                 "📋 Missions rechargées:",
                 missionsData.length,
@@ -166,7 +166,7 @@ function DashboardFreelance() {
     const handleShowMissions = async () => {
         setLoading(true);
         try {
-            const missionsData = await getAllMissions();
+            const missionsData = await getAvailableMissions();
             setMissions(missionsData);
             setShowMissions(true);
         } catch (error) {

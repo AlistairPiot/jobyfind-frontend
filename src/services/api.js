@@ -161,6 +161,51 @@ export const getAllMissions = () =>
             return [];
         });
 
+// ✅ Récupération de toutes les missions disponibles (sans candidatures acceptées)
+export const getAvailableMissions = () =>
+    api
+        .get("/missions/available")
+        .then((res) => {
+            return res.data["member"] || [];
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des missions disponibles:",
+                error
+            );
+            // Si l'endpoint n'existe pas encore, on filtre côté client
+            return getAllMissions().then(async (allMissions) => {
+                const availableMissions = [];
+
+                for (const mission of allMissions) {
+                    try {
+                        const applications = await getMissionApplications(
+                            mission.id
+                        );
+                        const hasAcceptedApplication = applications.some(
+                            (app) =>
+                                app.status === "ACCEPTED" &&
+                                app.missions &&
+                                app.missions.some((m) => m.id === mission.id)
+                        );
+
+                        if (!hasAcceptedApplication) {
+                            availableMissions.push(mission);
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Erreur lors de la vérification de la mission ${mission.id}:`,
+                            error
+                        );
+                        // En cas d'erreur, on garde la mission disponible
+                        availableMissions.push(mission);
+                    }
+                }
+
+                return availableMissions;
+            });
+        });
+
 // ✅ Création d'une candidature
 export const createJobApplication = (applicationData) =>
     api

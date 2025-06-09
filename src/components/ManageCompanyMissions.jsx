@@ -57,6 +57,12 @@ function ManageCompanyMissions({ missions, onClose }) {
         setSelectedMission(mission);
     };
 
+    const handleMissionUnavailable = (missionId) => {
+        console.log(`Mission ${missionId} devient indisponible`);
+        // Optionnel : afficher une notification
+        // Vous pouvez ajouter ici une logique pour notifier d'autres composants
+    };
+
     const currentMissions = activeTab === "all" ? missions : acceptedMissions;
 
     return (
@@ -176,6 +182,8 @@ function ManageCompanyMissions({ missions, onClose }) {
                         mission={selectedMission}
                         onClose={() => setSelectedMission(null)}
                         onStatusUpdate={loadAcceptedMissions}
+                        onMissionUnavailable={handleMissionUnavailable}
+                        showOnlyAccepted={activeTab === "accepted"}
                     />
                 )}
             </div>

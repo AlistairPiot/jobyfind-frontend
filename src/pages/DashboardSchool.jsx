@@ -3,7 +3,7 @@ import MissionRecommendationModal from "../components/MissionRecommendationModal
 import SchoolBadgeRequests from "../components/SchoolBadgeRequests";
 import SchoolBadgedStudents from "../components/SchoolBadgedStudents";
 import SchoolRecommendations from "../components/SchoolRecommendations";
-import { getAllMissions, getTypes } from "../services/api";
+import { getAvailableMissions, getTypes } from "../services/api";
 
 function DashboardSchool() {
     const [missions, setMissions] = useState([]);
@@ -53,7 +53,7 @@ function DashboardSchool() {
     const handleShowMissions = async () => {
         setLoading(true);
         try {
-            const missionsData = await getAllMissions();
+            const missionsData = await getAvailableMissions();
             setMissions(missionsData);
             setShowMissions(true);
             setShowStudents(false); // Masquer les étudiants

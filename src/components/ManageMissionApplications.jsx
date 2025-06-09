@@ -4,7 +4,13 @@ import {
     updateJobApplicationStatus,
 } from "../services/api";
 
-function ManageMissionApplications({ mission, onClose, onStatusUpdate }) {
+function ManageMissionApplications({
+    mission,
+    onClose,
+    onStatusUpdate,
+    onMissionUnavailable,
+    showOnlyAccepted = false,
+}) {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -17,11 +23,18 @@ function ManageMissionApplications({ mission, onClose, onStatusUpdate }) {
                 console.log("Données reçues:", data);
 
                 // Filtrer les candidatures pour n'inclure que celles liées à la mission sélectionnée
-                const filteredApplications = data.filter(
+                let filteredApplications = data.filter(
                     (application) =>
                         application.missions &&
                         application.missions.some((m) => m.id === mission.id)
                 );
+
+                // Si showOnlyAccepted est true, filtrer seulement les candidatures acceptées
+                if (showOnlyAccepted) {
+                    filteredApplications = filteredApplications.filter(
+                        (application) => application.status === "ACCEPTED"
+                    );
+                }
 
                 console.log(
                     "Candidatures filtrées pour la mission:",
@@ -37,7 +50,7 @@ function ManageMissionApplications({ mission, onClose, onStatusUpdate }) {
         };
 
         fetchApplications();
-    }, [mission.id]);
+    }, [mission.id, showOnlyAccepted]);
 
     const handleUpdateStatus = async (applicationId, newStatus) => {
         setUpdatingId(applicationId);
@@ -60,6 +73,11 @@ function ManageMissionApplications({ mission, onClose, onStatusUpdate }) {
             // Notifier le composant parent pour rafraîchir les missions acceptées
             if (onStatusUpdate) {
                 onStatusUpdate();
+            }
+
+            // Si une candidature est acceptée, notifier que la mission devient indisponible
+            if (newStatus === "ACCEPTED" && onMissionUnavailable) {
+                onMissionUnavailable(mission.id);
             }
         } catch (error) {
             console.error("Erreur lors de la mise à jour:", error);
@@ -97,11 +115,18 @@ function ManageMissionApplications({ mission, onClose, onStatusUpdate }) {
                 <div className="flex justify-between items-center">
                     <div>
                         <h2 className="text-2xl font-bold text-gray-800">
-                            Candidatures pour la mission
+                            {showOnlyAccepted
+                                ? "Candidatures acceptées pour la mission"
+                                : "Candidatures pour la mission"}
                         </h2>
                         <h3 className="text-lg text-gray-600 mt-1">
                             {mission.name}
                         </h3>
+                        {showOnlyAccepted && (
+                            <p className="text-sm text-green-600 mt-1">
+                                Affichage des candidatures acceptées uniquement
+                            </p>
+                        )}
                     </div>
                     <button
                         onClick={onClose}
@@ -137,7 +162,9 @@ function ManageMissionApplications({ mission, onClose, onStatusUpdate }) {
                     <p className="text-red-600 text-center py-4">{error}</p>
                 ) : applications.length === 0 ? (
                     <p className="text-gray-600 text-center py-8">
-                        Aucune candidature reçue pour cette mission.
+                        {showOnlyAccepted
+                            ? "Aucune candidature acceptée pour cette mission."
+                            : "Aucune candidature reçue pour cette mission."}
                     </p>
                 ) : (
                     <div className="space-y-4">
