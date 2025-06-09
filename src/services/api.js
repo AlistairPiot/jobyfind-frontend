@@ -459,3 +459,16 @@ export const getSchoolRecommendations = (schoolId) =>
 //     handleError(error, 'Impossible de charger vos candidatures');
 //     throw error; // Re-throw si nécessaire
 // }
+
+// ✅ Création d'un PaymentIntent pour Stripe
+export const createPaymentIntent = (paymentData) =>
+    api
+        .post("/payment/create-payment-intent", paymentData)
+        .then((res) => res.data)
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la création du PaymentIntent:",
+                error.response || error
+            );
+            throw error;
+        });

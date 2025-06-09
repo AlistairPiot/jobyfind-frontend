@@ -7,6 +7,7 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 import { STRIPE_CONFIG } from "../config/stripe";
+import { createPaymentIntent } from "../services/api";
 
 // Initialiser Stripe avec la clé publique
 const stripePromise = loadStripe(STRIPE_CONFIG.publishableKey);
@@ -34,33 +35,16 @@ const CheckoutForm = ({ mission, onSuccess, onCancel }) => {
             // Étape 1 : Créer un PaymentIntent via le backend
             console.log("🚀 Création du PaymentIntent via le backend...");
 
-            const paymentIntentResponse = await fetch(
-                "http://localhost:8000/api/payment/create-payment-intent",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        amount: STRIPE_CONFIG.applicationFee,
-                        mission_name: mission.name,
-                        mission_id: mission.id || "unknown",
-                        name: `Candidat pour ${mission.name}`,
-                        email: "candidat@jobyfind.com",
-                    }),
-                }
-            );
-
-            if (!paymentIntentResponse.ok) {
-                const errorData = await paymentIntentResponse.json();
-                throw new Error(
-                    errorData.error ||
-                        "Erreur lors de la création du PaymentIntent"
-                );
-            }
+            const paymentIntentResponse = await createPaymentIntent({
+                amount: STRIPE_CONFIG.applicationFee,
+                mission_name: mission.name,
+                mission_id: mission.id || "unknown",
+                name: `Candidat pour ${mission.name}`,
+                email: "candidat@jobyfind.com",
+            });
 
             const { client_secret, customer_id, payment_intent_id } =
-                await paymentIntentResponse.json();
+                paymentIntentResponse;
             console.log("✅ PaymentIntent créé:", payment_intent_id);
             console.log("✅ Customer créé:", customer_id);
 
