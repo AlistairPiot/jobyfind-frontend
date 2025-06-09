@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./../context/AuthContext";
 import { createMission, getTypes } from "./../services/api";
+import SkillSelector from "./SkillSelector";
 
 function CreateMissionForm() {
     const [name, setName] = useState("");
@@ -9,6 +10,7 @@ function CreateMissionForm() {
     const [types, setTypes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [description, setDescription] = useState("");
+    const [selectedSkills, setSelectedSkills] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const { isAuthenticated, userId, userRole } = useAuth();
 
@@ -59,12 +61,18 @@ function CreateMissionForm() {
         }
 
         try {
+            // Préparer les skills pour l'API (format IRI)
+            const skillsIRI = selectedSkills.map(
+                (skill) => `/api/skills/${skill.id}`
+            );
+
             // Affiche les données avant envoi pour le débogage
             console.log("Données envoyées à l'API:", {
                 name,
                 description,
                 user: `/api/users/${userId}`,
                 type: typeId,
+                skills: skillsIRI,
             });
 
             // Création de la mission
@@ -73,6 +81,7 @@ function CreateMissionForm() {
                 description,
                 user: `/api/users/${userId}`,
                 type: typeId,
+                skills: skillsIRI,
             });
 
             alert("Mission créée avec succès !");
@@ -168,6 +177,22 @@ function CreateMissionForm() {
                             </option>
                         ))}
                     </select>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Compétences requises pour la mission
+                    </label>
+                    <div className="border border-gray-300 rounded-lg p-4">
+                        <SkillSelector
+                            selectedSkills={selectedSkills}
+                            onSkillsChange={setSelectedSkills}
+                        />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                        Sélectionnez les compétences nécessaires pour cette
+                        mission. Les candidats pourront voir ces exigences.
+                    </p>
                 </div>
             </div>
 

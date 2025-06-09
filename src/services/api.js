@@ -95,10 +95,70 @@ export const getTypes = () =>
             return [];
         });
 
+// ✅ Récupération des catégories de compétences
+export const getSkillCategories = () =>
+    api
+        .get("/skill_categories")
+        .then((res) => {
+            const categories = res.data["member"] || res.data;
+            return categories.map((category) => ({
+                ...category,
+                id: parseInt(category["@id"].split("/").pop()),
+            }));
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des catégories de compétences:",
+                error.response || error
+            );
+            return [];
+        });
+
+// ✅ Récupération des compétences par catégorie
+export const getSkillsByCategory = (categoryId) =>
+    api
+        .get(`/skills?skillCategory=/api/skill_categories/${categoryId}`)
+        .then((res) => {
+            const skills = res.data["member"] || res.data;
+            return skills.map((skill) => ({
+                ...skill,
+                id: parseInt(skill["@id"].split("/").pop()),
+            }));
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des compétences:",
+                error.response || error
+            );
+            return [];
+        });
+
+// ✅ Récupération de toutes les compétences
+export const getAllSkills = () =>
+    api
+        .get("/skills?pagination=false&itemsPerPage=1000")
+        .then((res) => {
+            const skills = res.data["member"] || res.data;
+            const processedSkills = skills.map((skill) => ({
+                ...skill,
+                id: parseInt(skill["@id"].split("/").pop()),
+            }));
+            return processedSkills;
+        })
+        .catch((error) => {
+            console.error(
+                "Erreur lors de la récupération des compétences:",
+                error.response || error
+            );
+            return [];
+        });
+
 // ✅ Récupération des missions d'un user
 export const getMissionsByUser = (userId) =>
     api
-        .get(`/missions?user.id=${userId}`)
+        .get(
+            `/missions?user.id=${userId}&groups[]=mission:read&groups[]=skill:read`
+        )
         .then((res) => {
             console.log(res.data); // Ajoute cette ligne pour inspecter la réponse
             return res.data["member"] || [];
@@ -149,7 +209,7 @@ export const updateMission = async (id, missionData) => {
 // ✅ Récupération de toutes les missions
 export const getAllMissions = () =>
     api
-        .get("/missions")
+        .get("/missions?groups[]=mission:read&groups[]=skill:read")
         .then((res) => {
             return res.data["member"] || [];
         })
@@ -164,7 +224,7 @@ export const getAllMissions = () =>
 // ✅ Récupération de toutes les missions disponibles (sans candidatures acceptées)
 export const getAvailableMissions = () =>
     api
-        .get("/missions/available")
+        .get("/missions/available?groups[]=mission:read&groups[]=skill:read")
         .then((res) => {
             return res.data["member"] || [];
         })

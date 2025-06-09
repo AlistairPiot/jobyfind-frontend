@@ -87,20 +87,19 @@ function DashboardFreelance() {
         console.log("userId:", userId);
 
         try {
-            const recommendedIds = await getRecommendedMissions(userId);
-            console.log("📋 Nouveaux IDs recommandés:", recommendedIds);
-            setRecommendedMissionIds(recommendedIds);
+            const [recommendedIds, missionsData] = await Promise.all([
+                getRecommendedMissions(userId),
+                getAvailableMissions(),
+            ]);
 
-            // Toujours recharger les missions pour avoir les données à jour
-            console.log(
-                "🔄 Rechargement des missions pour mise à jour des tags"
-            );
-            const missionsData = await getAvailableMissions();
+            console.log("📋 Nouveaux IDs recommandés:", recommendedIds);
             console.log(
                 "📋 Missions rechargées:",
                 missionsData.length,
                 "missions"
             );
+
+            setRecommendedMissionIds(recommendedIds);
             setMissions(missionsData);
         } catch (error) {
             console.error(
@@ -166,7 +165,14 @@ function DashboardFreelance() {
     const handleShowMissions = async () => {
         setLoading(true);
         try {
+            // Charger les missions
             const missionsData = await getAvailableMissions();
+
+            console.log(
+                "🔧 DEBUG - handleShowMissions - Missions chargées:",
+                missionsData.length
+            );
+
             setMissions(missionsData);
             setShowMissions(true);
         } catch (error) {
@@ -440,6 +446,41 @@ function DashboardFreelance() {
                                                 </span>
                                             )}
                                         </div>
+
+                                        {/* Affichage des compétences requises */}
+                                        {mission.skills &&
+                                            mission.skills.length > 0 && (
+                                                <div className="mb-3">
+                                                    <h4 className="text-xs font-semibold text-gray-700 mb-2 text-center">
+                                                        Compétences requises :
+                                                    </h4>
+                                                    <div className="flex flex-wrap justify-center gap-1">
+                                                        {mission.skills
+                                                            .slice(0, 3)
+                                                            .map((skill) => (
+                                                                <span
+                                                                    key={
+                                                                        skill.id
+                                                                    }
+                                                                    className="inline-block text-xs px-2 py-1 rounded bg-green-100 text-green-700 border border-green-200"
+                                                                >
+                                                                    {skill.name}
+                                                                </span>
+                                                            ))}
+                                                        {mission.skills.length >
+                                                            3 && (
+                                                            <span className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+                                                                +
+                                                                {mission.skills
+                                                                    .length -
+                                                                    3}{" "}
+                                                                autres
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+
                                         <p className="text-sm text-gray-600 mb-4 line-clamp-3">
                                             {mission.description}
                                         </p>
@@ -513,6 +554,27 @@ function DashboardFreelance() {
                     </div>
 
                     <div className="space-y-6 mb-8">
+                        {/* Compétences requises */}
+                        {selectedMission.skills &&
+                            selectedMission.skills.length > 0 && (
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-700 mb-3">
+                                        Compétences requises (
+                                        {selectedMission.skills.length})
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {selectedMission.skills.map((skill) => (
+                                            <span
+                                                key={skill.id}
+                                                className="inline-block px-3 py-1 rounded-md border bg-green-50 text-green-700 border-green-200 font-medium"
+                                            >
+                                                {skill.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                         <div>
                             <h3 className="text-lg font-semibold text-gray-700">
                                 Description
