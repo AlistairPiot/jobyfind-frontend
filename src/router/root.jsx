@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import CGU from "../pages/CGU";
+import CGV from "../pages/CGV";
 import CreateMission from "../pages/CreateMission";
 import DashboardCompany from "../pages/DashboardCompany";
 import DashboardFreelance from "../pages/DashboardFreelance";
@@ -8,6 +10,7 @@ import DashboardSchool from "../pages/DashboardSchool";
 import ErrorPage from "../pages/ErrorPage";
 import Home from "../pages/Home";
 import LoginForm from "../pages/LoginForm";
+import MentionsLegales from "../pages/MentionsLegales";
 import NotFound from "../pages/NotFound";
 import SignUpForm from "../pages/SignUpForm";
 import DashboardRouter from "../router/DashboardRoot";
@@ -57,6 +60,11 @@ function Root() {
             />
             <Route path="/signup" element={<SignUpForm />} />
             <Route path="/login" element={<LoginForm />} />
+
+            {/* Pages légales - accessibles à tous */}
+            <Route path="/cgu" element={<CGU />} />
+            <Route path="/cgv" element={<CGV />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
 
             {/* Route centrale qui redirige vers le bon dashboard */}
             <Route

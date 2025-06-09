@@ -20,9 +20,11 @@ function Nav() {
                     <div className="flex justify-between items-center">
                         <div className="flex-shrink-0">
                             <Link to="/" className="flex items-center">
-                                <span className="text-blue-600 font-bold text-2xl">
-                                    Jobyfind
-                                </span>
+                                <img
+                                    src="/logo_jobyfind.svg"
+                                    alt="Jobyfind"
+                                    className="h-8 w-auto"
+                                />
                             </Link>
                         </div>
                         <div>
@@ -31,13 +33,13 @@ function Nav() {
                                     <>
                                         <Link
                                             to="/signup"
-                                            className="px-4 py-2 rounded-md bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors"
+                                            className="px-4 py-2 rounded-md btn-primary-outline transition-colors"
                                         >
                                             Inscription
                                         </Link>
                                         <Link
                                             to="/login"
-                                            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                            className="px-4 py-2 rounded-md btn-primary transition-colors"
                                         >
                                             Connexion
                                         </Link>

@@ -10,14 +10,40 @@ function App() {
             <BrowserRouter>
                 <div className="flex flex-col min-h-screen bg-gray-50">
                     <Nav />
-                    <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
-                        <div className="w-full">
+                    <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-4">
+                        <div className="w-full h-full">
                             <Root />
                         </div>
                     </main>
-                    <footer className="py-6 bg-gray-100 shadow-inner">
-                        <div className="text-center text-gray-600 text-sm">
-                            <p>© 2025 Jobyfind - Tous droits réservés</p>
+                    <footer className="py-4 bg-gray-100 shadow-inner">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                            <div className="flex flex-col items-center space-y-3">
+                                <div className="flex space-x-6 text-sm">
+                                    <a
+                                        href="/mentions-legales"
+                                        className="text-gray-600 hover:text-primary transition-colors"
+                                    >
+                                        Mentions légales
+                                    </a>
+                                    <a
+                                        href="/cgv"
+                                        className="text-gray-600 hover:text-primary transition-colors"
+                                    >
+                                        CGV
+                                    </a>
+                                    <a
+                                        href="/cgu"
+                                        className="text-gray-600 hover:text-primary transition-colors"
+                                    >
+                                        CGU
+                                    </a>
+                                </div>
+                                <div className="text-center text-gray-600 text-sm">
+                                    <p>
+                                        © 2025 Jobyfind - Tous droits réservés
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </footer>
                 </div>
