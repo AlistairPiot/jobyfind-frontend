@@ -1,7 +1,16 @@
 import axios from "axios";
 
-// L'URL de l'API, centralisée ici pour faciliter la gestion
-const API_URL = "http://localhost:8000/api";
+// L'URL de l'API, utilise la variable d'environnement ou l'URL de production
+const getApiUrl = () => {
+    // Si on est sur Vercel (production), utiliser l'API de production
+    if (window.location.hostname.includes("vercel.app")) {
+        return "https://jobyfind-api.fly.dev/api";
+    }
+    // Sinon utiliser la variable d'environnement ou localhost
+    return import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+};
+
+const API_URL = getApiUrl();
 
 // Création de l'instance Axios
 const api = axios.create({
