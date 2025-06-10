@@ -7,7 +7,9 @@ const getApiUrl = () => {
         return "https://jobyfind-api.fly.dev/api";
     }
     // Sinon utiliser la variable d'environnement ou localhost
-    return import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+    console.log("API URL utilisée:", apiUrl);
+    return apiUrl;
 };
 
 const API_URL = getApiUrl();
