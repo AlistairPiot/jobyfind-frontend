@@ -233,13 +233,13 @@ function DashboardFreelance() {
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-blue-800 mb-6">
+                <h1 className="text-3xl font-bold text-primary mb-6">
                     Dashboard Etudiant
                 </h1>
                 <div className="flex flex-wrap justify-center gap-4">
                     <button
                         onClick={handleShowMissions}
-                        className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-md"
+                        className="px-6 py-2.5 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors shadow-md"
                     >
                         Voir les missions
                     </button>
@@ -271,7 +271,7 @@ function DashboardFreelance() {
                     <button
                         onClick={handleShowMissions}
                         disabled={loading}
-                        className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50"
+                        className="px-6 py-2.5 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors shadow-md disabled:opacity-50"
                     >
                         {loading ? (
                             <>
@@ -338,7 +338,7 @@ function DashboardFreelance() {
                                         handleFilterChange(e.target.value)
                                     }
                                     disabled={typesLoading}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm"
                                 >
                                     <option value="">Tous les types</option>
                                     {types.map((type) => (
@@ -416,7 +416,7 @@ function DashboardFreelance() {
                                         className={`h-2 ${
                                             hasUserApplied(mission.id)
                                                 ? "bg-green-600"
-                                                : "bg-blue-600"
+                                                : "bg-primary"
                                         }`}
                                     ></div>
                                     <div className="p-5 flex-grow">
@@ -434,7 +434,7 @@ function DashboardFreelance() {
                                         )}
 
                                         <div className="flex justify-center mb-3 gap-2">
-                                            <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full">
+                                            <span className="inline-block bg-primary-light text-primary text-xs px-2.5 py-0.5 rounded-full">
                                                 {mission.type?.name ||
                                                     "Non spécifié"}
                                             </span>
@@ -490,7 +490,7 @@ function DashboardFreelance() {
                                                     ✓ Candidature envoyée
                                                 </span>
                                             ) : (
-                                                <span className="text-blue-600 text-sm font-medium hover:underline">
+                                                <span className="text-primary text-sm font-medium hover:underline">
                                                     Voir les détails →
                                                 </span>
                                             )}
@@ -507,7 +507,7 @@ function DashboardFreelance() {
                 <div className="bg-white rounded-lg shadow-md p-6">
                     <button
                         onClick={() => setSelectedMission(null)}
-                        className="flex items-center text-gray-600 mb-6 hover:text-blue-600 transition-colors"
+                        className="flex items-center text-gray-600 mb-6 hover:text-primary transition-colors"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -539,7 +539,7 @@ function DashboardFreelance() {
                         )}
 
                         <div className="flex justify-center">
-                            <span className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+                            <span className="inline-block bg-primary-light text-primary text-sm px-3 py-1 rounded-full">
                                 {selectedMission.type?.name || "Non spécifié"}
                             </span>
                         </div>
@@ -607,7 +607,7 @@ function DashboardFreelance() {
                         ) : (
                             <button
                                 onClick={handleApply}
-                                className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors shadow-md flex items-center"
+                                className="bg-primary text-white px-6 py-3 rounded-md hover:bg-primary-hover transition-colors shadow-md flex items-center"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"

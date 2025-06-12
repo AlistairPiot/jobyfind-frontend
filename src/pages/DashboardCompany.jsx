@@ -97,19 +97,19 @@ function DashboardCompany() {
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-blue-800 mb-6">
+                <h1 className="text-3xl font-bold text-primary mb-6">
                     Dashboard Entreprise
                 </h1>
                 <div className="flex flex-wrap justify-center gap-4">
                     <Link
                         to="/create-mission"
-                        className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-md"
+                        className="px-6 py-2.5 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors shadow-md"
                     >
                         Ajouter une mission
                     </Link>
                     <button
                         onClick={handleShowManageMissions}
-                        className="px-6 py-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors shadow-md"
+                        className="px-6 py-2.5 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors shadow-md"
                     >
                         Gérer mes missions
                     </button>
@@ -123,7 +123,7 @@ function DashboardCompany() {
 
                 {loading ? (
                     <div className="flex justify-center items-center h-40">
-                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600"></div>
+                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
                         <p className="ml-4 text-gray-600">Chargement...</p>
                     </div>
                 ) : missions.length === 0 ? (
@@ -133,7 +133,7 @@ function DashboardCompany() {
                         </p>
                         <Link
                             to="/create-mission"
-                            className="text-blue-600 hover:underline"
+                            className="text-primary hover:underline"
                         >
                             Créer votre première mission
                         </Link>
@@ -145,13 +145,13 @@ function DashboardCompany() {
                                 key={mission.id}
                                 className="border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow"
                             >
-                                <div className="h-2 bg-blue-600"></div>
+                                <div className="h-2 bg-primary"></div>
                                 <div className="p-5 flex-grow">
                                     <h3 className="font-bold text-lg text-gray-800 mb-2 text-center">
                                         {mission.name}
                                     </h3>
                                     <div className="flex justify-center mb-3">
-                                        <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full">
+                                        <span className="inline-block bg-primary-light text-primary text-xs px-2.5 py-0.5 rounded-full">
                                             {mission.type?.name ||
                                                 "Non spécifié"}
                                         </span>
@@ -203,7 +203,7 @@ function DashboardCompany() {
                                         onClick={() =>
                                             handleShowMissionDetails(mission)
                                         }
-                                        className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md transition-colors"
+                                        className="bg-primary hover:bg-primary-hover text-white text-sm px-4 py-1.5 rounded-md transition-colors"
                                     >
                                         Voir détails
                                     </button>
@@ -243,7 +243,7 @@ function DashboardCompany() {
                                         {selectedMission.name}
                                     </h3>
                                     <div className="flex flex-wrap gap-2 mb-3">
-                                        <span className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+                                        <span className="inline-block bg-primary-light text-primary text-sm px-3 py-1 rounded-full">
                                             {selectedMission.type?.name ||
                                                 "Non spécifié"}
                                         </span>

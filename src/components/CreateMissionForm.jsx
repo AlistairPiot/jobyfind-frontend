@@ -200,7 +200,7 @@ function CreateMissionForm() {
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md disabled:opacity-50"
+                    className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 shadow-md disabled:opacity-50"
                 >
                     {submitting ? "Création en cours..." : "Créer la mission"}
                 </button>

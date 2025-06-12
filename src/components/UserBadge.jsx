@@ -311,7 +311,7 @@ function UserBadge() {
                     </p>
                     <button
                         onClick={() => setShowRequestModal(true)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors text-sm"
                     >
                         Demander un badge
                     </button>

@@ -41,7 +41,7 @@ function LoginForm() {
                     </p>
                 </div>
                 <div className="mt-8">
-                    <div className="h-1 w-full bg-blue-500 rounded-full mb-8"></div>
+                    <div className="h-1 w-full bg-primary rounded-full mb-8"></div>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label
@@ -59,7 +59,7 @@ function LoginForm() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="votre@email.com"
-                                    className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                                    className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
                                 />
                             </div>
                         </div>
@@ -81,7 +81,7 @@ function LoginForm() {
                                         setPassword(e.target.value)
                                     }
                                     placeholder="••••••••"
-                                    className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                                    className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
                                 />
                             </div>
                         </div>
@@ -97,7 +97,7 @@ function LoginForm() {
                         <div>
                             <button
                                 type="submit"
-                                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md"
+                                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 shadow-md"
                             >
                                 Se connecter
                             </button>
@@ -105,7 +105,7 @@ function LoginForm() {
                         <div className="text-sm text-center">
                             <a
                                 href="/signup"
-                                className="font-medium text-blue-600 hover:text-blue-500 transition-all duration-200"
+                                className="font-medium text-primary hover:text-primary-hover transition-all duration-200"
                             >
                                 Pas encore de compte ? S'inscrire
                             </a>

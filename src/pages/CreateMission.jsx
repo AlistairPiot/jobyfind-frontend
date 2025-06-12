@@ -6,7 +6,7 @@ function CreateMission() {
         <div className="max-w-3xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-blue-800">
+                    <h1 className="text-3xl font-bold text-primary">
                         Créer une nouvelle mission
                     </h1>
                     <p className="text-gray-600 mt-2">
@@ -16,7 +16,7 @@ function CreateMission() {
                 </div>
                 <Link
                     to="/dashboard/company"
-                    className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+                    className="flex items-center text-gray-600 hover:text-primary transition-colors"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

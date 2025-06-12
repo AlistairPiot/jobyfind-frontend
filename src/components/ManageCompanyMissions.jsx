@@ -101,7 +101,7 @@ function ManageCompanyMissions({ missions, onClose }) {
                                     onClick={() => setActiveTab("all")}
                                     className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                                         activeTab === "all"
-                                            ? "bg-white text-blue-600 shadow-sm"
+                                            ? "bg-white text-primary shadow-sm"
                                             : "text-gray-600 hover:text-gray-800"
                                     }`}
                                 >
@@ -124,7 +124,7 @@ function ManageCompanyMissions({ missions, onClose }) {
                         <div className="flex-1 overflow-y-auto p-6">
                             {loading ? (
                                 <div className="flex justify-center items-center h-32">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
                                     <p className="ml-4 text-gray-600">
                                         Chargement des missions...
                                     </p>
@@ -163,7 +163,7 @@ function ManageCompanyMissions({ missions, onClose }) {
                                                             mission
                                                         );
                                                     }}
-                                                    className="px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
+                                                    className="px-4 py-2 text-sm bg-primary-light text-primary rounded-md hover:bg-primary hover:text-white transition-all duration-200 transform hover:scale-105 cursor-pointer"
                                                 >
                                                     Voir les candidatures
                                                 </button>
