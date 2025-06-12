@@ -10,12 +10,12 @@ function App() {
             <BrowserRouter>
                 <div className="flex flex-col min-h-screen bg-gray-50">
                     <Nav />
-                    <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-4">
+                    <main className="flex-grow w-full">
                         <div className="w-full h-full">
                             <Root />
                         </div>
                     </main>
-                    <footer className="py-4 bg-gray-100 shadow-inner">
+                    <footer className="py-4 bg-white shadow-inner">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6">
                             <div className="flex flex-col items-center space-y-3">
                                 <div className="flex space-x-6 text-sm">

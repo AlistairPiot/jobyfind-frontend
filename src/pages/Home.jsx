@@ -28,141 +28,67 @@ function Home() {
     };
 
     return (
-        <div className="h-full flex items-center justify-center p-4 sm:p-6">
-            <div className="max-w-7xl mx-auto w-full">
-                {/* Layout Bento Grid - hauteur adaptative */}
-                <div className="grid grid-cols-12 grid-rows-6 gap-4 sm:gap-6 h-[70vh] min-h-[500px] max-h-[600px]">
-                    {/* Grande zone titre à gauche (6 colonnes, 6 rangées) */}
-                    <div className="col-span-12 lg:col-span-6 row-span-3 lg:row-span-6 flex flex-col justify-center items-start p-4 sm:p-6">
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4 lg:mb-6 tracking-tight">
-                            Bienvenue sur Jobyfind
-                        </h1>
-                        <p className="text-lg sm:text-xl text-gray-600 mb-8 lg:mb-12 max-w-2xl">
-                            La plateforme qui connecte les écoles, les
-                            entreprises et les étudiants pour des opportunités
-                            professionnelles.
-                        </p>
-                        {/* <div className="flex flex-wrap gap-3 sm:gap-4">
-                            <a
-                                href="/signup"
-                                className="px-6 sm:px-8 py-2 sm:py-3 rounded-md btn-primary font-medium transition-colors duration-300 shadow-md text-sm sm:text-base"
-                            >
-                                Inscription
-                            </a>
-                            <a
-                                href="/login"
-                                className="px-6 sm:px-8 py-2 sm:py-3 rounded-md btn-primary-outline font-medium transition-colors duration-300 text-sm sm:text-base"
-                            >
-                                Connexion
-                            </a>
-                        </div> */}
-                    </div>
-
-                    {/* Rectangle missions en haut à droite (6 colonnes, 2 rangées) */}
-                    <div className="col-span-12 lg:col-span-6 row-span-2 bg-primary-light rounded-lg p-4 sm:p-6 flex flex-col justify-center items-center border border-primary">
+        <div className="bg-white">
+            {/* Layout mobile : vertical avec défilement */}
+            <div className="lg:hidden min-h-screen">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                    <div className="space-y-6">
+                        {/* Titre et sous-titre mobile */}
                         <div className="text-center">
-                            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-primary mb-3 sm:mb-4">
-                                Des missions rien que pour vous et vos
-                                compétences, c'est possible !
-                            </h2>
-                            <div className="flex items-center justify-center space-x-3 sm:space-x-4 text-primary">
-                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary-light rounded-full flex items-center justify-center">
-                                    <span className="text-xs sm:text-sm font-semibold">
-                                        🎯
-                                    </span>
-                                </div>
-                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary-light rounded-full flex items-center justify-center">
-                                    <span className="text-xs sm:text-sm font-semibold">
-                                        💼
-                                    </span>
-                                </div>
-                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary-light rounded-full flex items-center justify-center">
-                                    <span className="text-xs sm:text-sm font-semibold">
-                                        ⭐
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Carré en bas à gauche (3 colonnes, 2 rangées) */}
-                    <div className="col-span-6 lg:col-span-3 row-span-2 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 sm:p-6 flex flex-col justify-center items-center border border-gray-200">
-                        <div className="text-center">
-                            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary-light rounded-full flex items-center justify-center mb-3 sm:mb-4 mx-auto">
-                                <span className="text-xl sm:text-2xl">🚀</span>
-                            </div>
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
-                                Lancez-vous !
-                            </h3>
-                            <p className="text-xs sm:text-sm text-gray-600">
-                                Rejoignez notre communauté et trouvez votre
-                                prochaine opportunité.
+                            <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-4 tracking-tight leading-tight">
+                                Bienvenue sur Jobyfind
+                            </h1>
+                            <p className="text-base text-gray-600 leading-relaxed max-w-md mx-auto">
+                                La plateforme qui connecte les écoles, les
+                                entreprises et les étudiants pour des
+                                opportunités professionnelles.
                             </p>
                         </div>
-                    </div>
 
-                    {/* Carré carousel en bas à droite (3 colonnes, 2 rangées) */}
-                    <div className="col-span-6 lg:col-span-3 row-span-2 bg-white rounded-lg p-4 sm:p-6 border border-gray-200 shadow-sm relative">
-                        <div className="h-full flex flex-col">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 text-center">
-                                Qui êtes-vous ?
-                            </h3>
-
-                            <div className="flex-1 flex flex-col justify-center">
-                                <div className="text-center">
-                                    <h4 className="text-lg sm:text-xl font-bold text-primary mb-2 sm:mb-3">
-                                        {slides[currentSlide].title}
-                                    </h4>
-                                    <p className="text-gray-600 text-xs sm:text-sm">
-                                        {slides[currentSlide].content}
-                                    </p>
-                                </div>
+                        {/* Bloc missions mobile */}
+                        <div className="bg-gray-100 rounded-2xl p-6 text-center">
+                            <h2 className="text-lg font-bold text-black mb-4">
+                                DES MISSIONS RIEN QUE POUR VOUS ET VOS
+                                COMPÉTENCES, C'EST POSSIBLE !
+                            </h2>
+                            <div className="w-full h-32 bg-white rounded-lg flex items-center justify-center">
+                                <div className="text-gray-400 text-4xl">🎯</div>
                             </div>
+                        </div>
 
-                            {/* Contrôles de navigation et indicateurs centrés */}
-                            <div className="flex flex-col items-center space-y-2 mt-3 sm:mt-4">
-                                {/* Contrôles de navigation */}
-                                <div className="flex justify-center space-x-2">
-                                    <button
-                                        onClick={prevSlide}
-                                        className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                        {/* Bloc carrousel mobile */}
+                        <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                            <h3 className="text-base font-semibold text-black mb-4 text-center">
+                                QUI ÊTES VOUS ?
+                            </h3>
+                            <div className="text-center mb-4">
+                                <h4 className="text-lg font-bold text-primary mb-2">
+                                    {slides[currentSlide].title.toUpperCase()} :
+                                </h4>
+                                <p className="text-gray-600 text-sm">
+                                    {slides[currentSlide].content}
+                                </p>
+                            </div>
+                            <div className="flex justify-center items-center space-x-3">
+                                <button
+                                    onClick={prevSlide}
+                                    className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                >
+                                    <svg
+                                        className="w-4 h-4 text-gray-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
                                     >
-                                        <svg
-                                            className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M15 19l-7-7 7-7"
-                                            />
-                                        </svg>
-                                    </button>
-                                    <button
-                                        onClick={nextSlide}
-                                        className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
-                                    >
-                                        <svg
-                                            className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M9 5l7 7-7 7"
-                                            />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                {/* Indicateurs de slide */}
-                                <div className="flex justify-center space-x-1">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M15 19l-7-7 7-7"
+                                        />
+                                    </svg>
+                                </button>
+                                <div className="flex space-x-1">
                                     {slides.map((_, index) => (
                                         <button
                                             key={index}
@@ -177,6 +103,124 @@ function Home() {
                                         />
                                     ))}
                                 </div>
+                                <button
+                                    onClick={nextSlide}
+                                    className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                >
+                                    <svg
+                                        className="w-4 h-4 text-gray-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 5l7 7-7 7"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Layout tablette horizontale et desktop : vraie bento grid plein écran */}
+            <div className="hidden lg:block h-screen">
+                <div className="px-2 sm:px-4 xl:px-6 h-full pb-4">
+                    <div className="grid grid-cols-12 grid-rows-6 gap-2 xl:gap-3 h-full w-full">
+                        {/* Zone titre - 6 colonnes, 6 rangées (moitié gauche) */}
+                        <div className="col-span-6 row-span-6 flex flex-col justify-center items-center text-center p-4">
+                            <h1 className="text-3xl xl:text-4xl 2xl:text-5xl font-bold text-primary mb-4 xl:mb-6 tracking-tight leading-tight">
+                                Bienvenue sur Jobyfind
+                            </h1>
+                            <p className="text-base xl:text-lg 2xl:text-xl text-gray-600 leading-relaxed max-w-lg">
+                                La plateforme qui connecte les écoles, les
+                                entreprises et les étudiants pour des
+                                opportunités professionnelles.
+                            </p>
+                        </div>
+
+                        {/* Bloc missions - 6 colonnes, 3 rangées (en haut à droite) */}
+                        <div className="col-span-6 row-span-3 bg-gray-100 rounded-xl xl:rounded-2xl p-4 xl:p-6 text-center flex flex-col">
+                            <h2 className="text-sm xl:text-base font-bold text-black mb-3 xl:mb-4 leading-tight">
+                                DES MISSIONS RIEN QUE POUR VOUS ET VOS
+                                COMPÉTENCES, C'EST POSSIBLE !
+                            </h2>
+                            <div className="flex-1 bg-white rounded-lg flex items-center justify-center">
+                                <div className="text-gray-400 text-3xl xl:text-4xl">
+                                    🎯
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Bloc carrousel - 6 colonnes, 3 rangées (en bas à droite) */}
+                        <div className="col-span-6 row-span-3 bg-white rounded-xl xl:rounded-2xl p-4 xl:p-6 border border-gray-200 shadow-sm flex flex-col">
+                            <h3 className="text-sm xl:text-base font-semibold text-black mb-3 text-center">
+                                QUI ÊTES VOUS ?
+                            </h3>
+                            <div className="flex-1 flex flex-col justify-center text-center">
+                                <h4 className="text-base xl:text-lg font-bold text-primary mb-2 xl:mb-3">
+                                    {slides[currentSlide].title.toUpperCase()} :
+                                </h4>
+                                <p className="text-gray-600 mb-4 text-sm xl:text-base leading-relaxed">
+                                    {slides[currentSlide].content}
+                                </p>
+                            </div>
+                            <div className="flex justify-center items-center space-x-4">
+                                <button
+                                    onClick={prevSlide}
+                                    className="w-8 h-8 xl:w-10 xl:h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                >
+                                    <svg
+                                        className="w-4 h-4 xl:w-5 xl:h-5 text-gray-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M15 19l-7-7 7-7"
+                                        />
+                                    </svg>
+                                </button>
+                                <div className="flex space-x-2">
+                                    {slides.map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() =>
+                                                setCurrentSlide(index)
+                                            }
+                                            className={`w-3 h-3 rounded-full transition-colors ${
+                                                index === currentSlide
+                                                    ? "bg-primary"
+                                                    : "bg-gray-300"
+                                            }`}
+                                        />
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={nextSlide}
+                                    className="w-8 h-8 xl:w-10 xl:h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                >
+                                    <svg
+                                        className="w-4 h-4 xl:w-5 xl:h-5 text-gray-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 5l7 7-7 7"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -1,8 +1,10 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import About from "../pages/About";
 import CGU from "../pages/CGU";
 import CGV from "../pages/CGV";
+import Contact from "../pages/Contact";
 import CreateMission from "../pages/CreateMission";
 import DashboardCompany from "../pages/DashboardCompany";
 import DashboardFreelance from "../pages/DashboardFreelance";
@@ -61,7 +63,9 @@ function Root() {
             <Route path="/signup" element={<SignUpForm />} />
             <Route path="/login" element={<LoginForm />} />
 
-            {/* Pages légales - accessibles à tous */}
+            {/* Pages légales et informatives - accessibles à tous */}
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/cgu" element={<CGU />} />
             <Route path="/cgv" element={<CGV />} />
             <Route path="/mentions-legales" element={<MentionsLegales />} />
