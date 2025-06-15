@@ -172,10 +172,11 @@ function Home() {
                             <div className="flex justify-center items-center space-x-4">
                                 <button
                                     onClick={prevSlide}
-                                    className="w-8 h-8 xl:w-10 xl:h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                    className="w-10 h-10 xl:w-12 xl:h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                    aria-label="Diapositive précédente"
                                 >
                                     <svg
-                                        className="w-4 h-4 xl:w-5 xl:h-5 text-gray-600"
+                                        className="w-5 h-5 xl:w-6 xl:h-6 text-gray-600"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -195,20 +196,24 @@ function Home() {
                                             onClick={() =>
                                                 setCurrentSlide(index)
                                             }
-                                            className={`w-3 h-3 rounded-full transition-colors ${
+                                            className={`w-4 h-4 rounded-full transition-colors ${
                                                 index === currentSlide
                                                     ? "bg-primary"
                                                     : "bg-gray-300"
+                                            }`}
+                                            aria-label={`Aller à la diapositive ${
+                                                index + 1
                                             }`}
                                         />
                                     ))}
                                 </div>
                                 <button
                                     onClick={nextSlide}
-                                    className="w-8 h-8 xl:w-10 xl:h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                    className="w-10 h-10 xl:w-12 xl:h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                    aria-label="Diapositive suivante"
                                 >
                                     <svg
-                                        className="w-4 h-4 xl:w-5 xl:h-5 text-gray-600"
+                                        className="w-5 h-5 xl:w-6 xl:h-6 text-gray-600"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
