@@ -9,11 +9,28 @@ function SignUpForm() {
     const [error, setError] = useState(null);
     const navigate = useNavigate(); // Hook pour la redirection
 
+    // Validation du mot de passe
+    const passwordValidation = {
+        minLength: password.length >= 8,
+        hasUpperCase: /[A-Z]/.test(password),
+        hasLowerCase: /[a-z]/.test(password),
+        hasNumber: /[0-9]/.test(password),
+        hasSpecialChar: /[@$!%*?&.]/.test(password),
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         if (!role) {
             setError("Please select a role.");
+            return;
+        }
+
+        // Vérifier si le mot de passe est valide
+        if (!Object.values(passwordValidation).every(Boolean)) {
+            setError(
+                "Le mot de passe ne respecte pas tous les critères requis."
+            );
             return;
         }
 
@@ -25,7 +42,14 @@ function SignUpForm() {
             navigate("/login");
         } catch (err) {
             console.error("Erreur lors de l'inscription :", err);
-            setError("An error occurred. Please try again.");
+            // Vérifier si l'erreur concerne une adresse email déjà utilisée
+            if (err.response?.data?.error === "User already exists") {
+                setError(
+                    "Cette adresse email est déjà utilisée. Veuillez en utiliser une autre ou vous connecter."
+                );
+            } else {
+                setError("Une erreur est survenue. Veuillez réessayer.");
+            }
         }
     };
 
@@ -86,6 +110,68 @@ function SignUpForm() {
                                         placeholder="••••••••"
                                         className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
                                     />
+                                </div>
+                                <div className="mt-2 space-y-2">
+                                    <div className="flex items-center">
+                                        <div
+                                            className={`w-4 h-4 rounded-full mr-2 ${
+                                                passwordValidation.minLength
+                                                    ? "bg-green-500"
+                                                    : "bg-red-500"
+                                            }`}
+                                        ></div>
+                                        <span className="text-sm">
+                                            Au moins 8 caractères
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div
+                                            className={`w-4 h-4 rounded-full mr-2 ${
+                                                passwordValidation.hasUpperCase
+                                                    ? "bg-green-500"
+                                                    : "bg-red-500"
+                                            }`}
+                                        ></div>
+                                        <span className="text-sm">
+                                            Une lettre majuscule
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div
+                                            className={`w-4 h-4 rounded-full mr-2 ${
+                                                passwordValidation.hasLowerCase
+                                                    ? "bg-green-500"
+                                                    : "bg-red-500"
+                                            }`}
+                                        ></div>
+                                        <span className="text-sm">
+                                            Une lettre minuscule
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div
+                                            className={`w-4 h-4 rounded-full mr-2 ${
+                                                passwordValidation.hasNumber
+                                                    ? "bg-green-500"
+                                                    : "bg-red-500"
+                                            }`}
+                                        ></div>
+                                        <span className="text-sm">
+                                            Un chiffre
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div
+                                            className={`w-4 h-4 rounded-full mr-2 ${
+                                                passwordValidation.hasSpecialChar
+                                                    ? "bg-green-500"
+                                                    : "bg-red-500"
+                                            }`}
+                                        ></div>
+                                        <span className="text-sm">
+                                            Un caractère spécial (@$!%*?&.)
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <div>
