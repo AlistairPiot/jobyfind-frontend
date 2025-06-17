@@ -28,11 +28,11 @@ function Home() {
     };
 
     return (
-        <div className="bg-white">
+        <div className="bg-white h-[calc(100vh-4rem)] overflow-hidden">
             {/* Layout mobile : vertical avec défilement */}
-            <div className="lg:hidden min-h-screen">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-                    <div className="space-y-6">
+            <div className="lg:hidden h-full">
+                <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 py-3">
+                    <div className="grid grid-rows-[auto_1fr_1fr_auto] gap-3 h-full">
                         {/* Titre et sous-titre mobile */}
                         <div className="text-center">
                             <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-4 tracking-tight leading-tight">
@@ -46,22 +46,22 @@ function Home() {
                         </div>
 
                         {/* Bloc missions mobile */}
-                        <div className="bg-gray-100 rounded-2xl p-6 text-center">
+                        <div className="bg-gray-100 rounded-2xl p-6 text-center flex flex-col">
                             <h2 className="text-lg font-bold text-black mb-4">
                                 DES MISSIONS RIEN QUE POUR VOUS ET VOS
                                 COMPÉTENCES, C'EST POSSIBLE !
                             </h2>
-                            <div className="w-full h-32 bg-white rounded-lg flex items-center justify-center">
+                            <div className="flex-1 bg-white rounded-lg flex items-center justify-center">
                                 <div className="text-gray-400 text-4xl">🎯</div>
                             </div>
                         </div>
 
                         {/* Bloc carrousel mobile */}
-                        <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                        <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col">
                             <h3 className="text-base font-semibold text-black mb-4 text-center">
                                 QUI ÊTES VOUS ?
                             </h3>
-                            <div className="text-center mb-4">
+                            <div className="flex-1 flex flex-col justify-center text-center">
                                 <h4 className="text-lg font-bold text-primary mb-2">
                                     {slides[currentSlide].title.toUpperCase()} :
                                 </h4>
@@ -69,7 +69,7 @@ function Home() {
                                     {slides[currentSlide].content}
                                 </p>
                             </div>
-                            <div className="flex justify-center items-center space-x-3">
+                            <div className="flex justify-center items-center space-x-3 mt-4">
                                 <button
                                     onClick={prevSlide}
                                     className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
@@ -123,16 +123,29 @@ function Home() {
                                 </button>
                             </div>
                         </div>
+
+                        {/* Carte statistiques */}
+                        <div className="bg-gray-100 rounded-2xl p-6">
+                            <div className="flex flex-col">
+                                <div className="text-4xl font-bold text-primary mb-2">
+                                    + 150
+                                </div>
+                                <div className="text-sm text-gray-700 uppercase font-medium">
+                                    Entreprises qui ont démarré une mission avec
+                                    nos jeunes freelances
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Layout tablette horizontale et desktop : vraie bento grid plein écran */}
-            <div className="hidden lg:block h-screen">
-                <div className="px-2 sm:px-4 xl:px-6 h-full pb-4">
-                    <div className="grid grid-cols-12 grid-rows-6 gap-2 xl:gap-3 h-full w-full">
-                        {/* Zone titre - 6 colonnes, 6 rangées (moitié gauche) */}
-                        <div className="col-span-6 row-span-6 flex flex-col justify-center items-center text-center p-4">
+            <div className="hidden lg:block h-full">
+                <div className="px-2 sm:px-4 xl:px-6 h-full">
+                    <div className="grid grid-cols-12 grid-rows-6 gap-1.5 xl:gap-1.5 h-full w-full">
+                        {/* Zone titre - 6 colonnes, 4 rangées (moitié gauche) */}
+                        <div className="col-span-6 row-span-4 flex flex-col justify-center items-center text-center p-4">
                             <h1 className="text-3xl xl:text-4xl 2xl:text-5xl font-bold text-primary mb-4 xl:mb-6 tracking-tight leading-tight">
                                 Bienvenue sur Jobyfind
                             </h1>
@@ -226,6 +239,19 @@ function Home() {
                                         />
                                     </svg>
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* Carte statistiques */}
+                        <div className="col-span-6 row-span-2 bg-gray-100 rounded-xl xl:rounded-2xl p-4 xl:p-6">
+                            <div className="flex flex-col h-full justify-center">
+                                <div className="text-5xl font-bold text-primary mb-3">
+                                    + 150
+                                </div>
+                                <div className="text-lg text-gray-700 uppercase font-medium">
+                                    Entreprises qui ont démarré une mission avec
+                                    nos jeunes freelances
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -13,22 +13,12 @@ function MyApplications({ onClose, refreshApplications }) {
         const fetchApplications = async () => {
             try {
                 const data = await getUserApplications(userId);
-                console.log("Candidatures avec groupes mission:read:", data);
-                if (data.length > 0 && data[1]) {
-                    console.log("Candidature 2 (mission 21):", data[1]);
-                    if (data[1].missions && data[1].missions[0]) {
-                        console.log("Mission 21:", data[1].missions[0]);
-                        if (data[1].missions[0].user) {
-                            console.log(
-                                "Utilisateur mission 21:",
-                                data[1].missions[0].user
-                            );
-                        }
-                    }
-                }
                 setApplications(data);
-            } catch {
-                setError("Erreur lors de la récupération de vos candidatures");
+            } catch (error) {
+                console.error(
+                    "Erreur lors de la récupération des candidatures:",
+                    error
+                );
             } finally {
                 setLoading(false);
             }

@@ -41,14 +41,13 @@ function SkillSelector({ selectedSkills, onSkillsChange }) {
             setLoadingSkills((prev) => ({ ...prev, [categoryId]: true }));
             try {
                 const skills = await getSkillsByCategory(categoryId);
-                console.log(`Skills pour la catégorie ${categoryId}:`, skills);
                 setSkillsByCategory((prev) => ({
                     ...prev,
                     [categoryId]: skills,
                 }));
             } catch (error) {
                 console.error(
-                    `Erreur lors du chargement des skills pour la catégorie ${categoryId}:`,
+                    "Erreur lors de la récupération des compétences:",
                     error
                 );
                 // Fallback: afficher un message d'erreur ou essayer une autre méthode

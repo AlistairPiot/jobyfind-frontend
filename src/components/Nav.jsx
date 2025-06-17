@@ -25,9 +25,9 @@ function Nav() {
     return (
         <>
             <nav className="bg-white">
-                <div className="max-w-full mx-auto px-2 sm:px-4 xl:px-6 py-4">
+                <div className="max-w-full mx-auto px-2 sm:px-4 xl:px-6 py-2">
                     {/* Encadré gris pour tout le header */}
-                    <div className="rounded-full px-6 py-3 border border-gray-200">
+                    <div className="rounded-full px-4 py-2 border border-gray-200">
                         <div className="flex justify-between items-center">
                             <div className="flex-shrink-0">
                                 <Link to="/" className="flex items-center">
