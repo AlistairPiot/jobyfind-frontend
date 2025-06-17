@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 
 // Import des images (à adapter selon leur emplacement réel)
 
+const cardBase =
+    "bg-white rounded-xl shadow flex flex-col p-0 overflow-hidden relative min-h-[420px] max-h-[440px]";
+const cardTextBlock =
+    "bg-white p-6 rounded-b-xl flex flex-col gap-3 relative z-10 mt-4";
+
 const NosServices = () => {
     return (
         <div className="bg-gray-50 min-h-screen py-10">
@@ -73,53 +78,105 @@ const NosServices = () => {
                 </div>
                 {/* Section 2 : Grille de 3 cartes */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Paiement sécurisé */}
-                    <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center relative">
-                        {/* Image shield-card au-dessus */}
-                        <img
-                            src="/shield-card.png"
-                            alt="Sécurité"
-                            className="h-16 mb-2"
-                        />
-                        <div className="flex justify-center items-center gap-4 mb-4">
-                            <img
-                                src="/paypal.png"
-                                alt="PayPal"
-                                className="h-8"
+                    {/* Paiement sécurisé - Adaptée à la maquette */}
+                    <div
+                        className={cardBase}
+                        style={{
+                            background:
+                                "radial-gradient(circle, #f8f8fa 80%, #f0f0f5 100%)",
+                        }}
+                    >
+                        {/* Fond à petits points (SVG pattern) */}
+                        <svg
+                            className="absolute inset-0 w-full h-full"
+                            style={{ zIndex: 0 }}
+                            width="100%"
+                            height="100%"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <defs>
+                                <pattern
+                                    id="dots-pay"
+                                    x="0"
+                                    y="0"
+                                    width="20"
+                                    height="20"
+                                    patternUnits="userSpaceOnUse"
+                                >
+                                    <circle
+                                        cx="1"
+                                        cy="1"
+                                        r="1"
+                                        fill="#d3d3e6"
+                                    />
+                                </pattern>
+                            </defs>
+                            <rect
+                                width="100%"
+                                height="100%"
+                                fill="url(#dots-pay)"
                             />
+                        </svg>
+                        {/* Logos et carte centrale */}
+                        <div
+                            className="relative flex flex-col items-center pt-6 pb-2"
+                            style={{ zIndex: 1, minHeight: 220 }}
+                        >
+                            {/* Logos autour de la carte centrale */}
+                            <div className="absolute left-0 right-0 mx-auto top-10 flex justify-between items-center w-[90%]">
+                                <img
+                                    src="/paypal.png"
+                                    alt="PayPal"
+                                    className="w-32 h-16"
+                                />
+                                <img
+                                    src="/stripe.png"
+                                    alt="Stripe"
+                                    className="w-32 h-16"
+                                />
+                            </div>
+                            <div className="absolute left-0 right-0 mx-auto bottom-0 flex justify-between items-center w-[90%]">
+                                <img
+                                    src="/applepay.png"
+                                    alt="Apple Pay"
+                                    className="w-32 h-16"
+                                />
+                                <img
+                                    src="/gpay.png"
+                                    alt="Google Pay"
+                                    className="w-32 h-16"
+                                />
+                            </div>
+                            {/* Carte bancaire protégée */}
                             <img
-                                src="/stripe.png"
-                                alt="Stripe"
-                                className="h-8"
-                            />
-                            <img
-                                src="/applepay.png"
-                                alt="Apple Pay"
-                                className="h-8"
-                            />
-                            <img
-                                src="/gpay.png"
-                                alt="Google Pay"
-                                className="h-8"
+                                src="/shield-card.png"
+                                alt="Carte protégée"
+                                className="relative z-10 w-48 h-32 object-contain mt-10 mb-2"
                             />
                         </div>
-                        <h3 className="text-lg font-semibold mb-2 text-center">
-                            DES MISSIONS PAYÉES EN TOUTE SIMPLICITÉ
-                        </h3>
-                        <p className="text-gray-600 text-center mb-4">
-                            Les paiements sont réalisés via Stripe ou PayPal,
-                            une fois la mission validée par les deux parties.
-                        </p>
-                        <Link
-                            to="#"
-                            className="inline-block px-0 py-0 rounded-none bg-transparent text-[#7B7BC2] font-semibold text-base hover:underline shadow-none transition"
-                        >
-                            EN SAVOIR PLUS
-                        </Link>
+                        {/* Bloc texte */}
+                        <div className={cardTextBlock + " mt-4"}>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">
+                                DES MISSIONS PAYÉES EN TOUTE SIMPLICITÉ
+                            </h3>
+                            <p className="text-gray-600 text-center mb-2">
+                                Les paiements sont réalisés via Stripe ou
+                                PayPal, une fois la mission validée par les deux
+                                parties.
+                            </p>
+                            <div className="flex justify-center">
+                                <Link
+                                    to="#"
+                                    className="inline-block px-0 py-0 rounded-none bg-transparent text-[#7B7BC2] font-semibold text-base hover:underline shadow-none transition"
+                                >
+                                    EN SAVOIR PLUS
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                     {/* Booster profil/offres - Adaptée à la maquette */}
-                    <div className="bg-white rounded-xl shadow flex flex-col p-0 overflow-hidden relative">
-                        <div className="p-8 pb-0 flex flex-col gap-2">
+                    <div className={cardBase}>
+                        <div className="p-6 pb-0 flex flex-col gap-2">
                             <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">
                                 BOOSTEZ VOTRE PROFIL OU VOS OFFRES
                             </h3>
@@ -130,7 +187,7 @@ const NosServices = () => {
                             </p>
                         </div>
                         {/* Radar + avatars */}
-                        <div className="relative flex justify-center items-end h-64 mt-2 mb-2">
+                        <div className="relative flex justify-center items-end h-44 mt-2 mb-2">
                             <img
                                 src="/radar.png"
                                 alt="Radar"
@@ -140,25 +197,25 @@ const NosServices = () => {
                             <img
                                 src="/personne2.png"
                                 alt="Personne 2"
-                                className="absolute left-[18%] bottom-[55%] w-14 h-14 rounded-full border-4 border-white shadow-md"
+                                className="absolute left-[18%] bottom-[55%] w-12 h-12 rounded-full border-4 border-white shadow-md"
                             />
                             <img
                                 src="/real-estate.png"
                                 alt="Real Estate"
-                                className="absolute left-[35%] bottom-[30%] w-20 h-20 rounded-full border-4 border-white shadow-md"
+                                className="absolute left-[35%] bottom-[30%] w-16 h-16 rounded-full border-4 border-white shadow-md"
                             />
                             <img
                                 src="/personne-pp.png"
                                 alt="Personne PP"
-                                className="absolute left-[60%] bottom-[60%] w-14 h-14 rounded-full border-4 border-white shadow-md"
+                                className="absolute left-[60%] bottom-[60%] w-12 h-12 rounded-full border-4 border-white shadow-md"
                             />
                             <img
                                 src="/mds.png"
                                 alt="MDS"
-                                className="absolute left-[70%] bottom-[35%] w-16 h-16 rounded-full border-4 border-white shadow-md"
+                                className="absolute left-[70%] bottom-[35%] w-14 h-14 rounded-full border-4 border-white shadow-md"
                             />
                         </div>
-                        <div className="flex justify-center pb-6">
+                        <div className="flex justify-center pb-4">
                             <Link
                                 to="#"
                                 className="inline-block px-0 py-0 rounded-none bg-transparent text-[#7B7BC2] font-semibold text-base hover:underline shadow-none transition"
@@ -169,7 +226,7 @@ const NosServices = () => {
                     </div>
                     {/* Déblocage infos clients - Adaptée à la maquette */}
                     <div
-                        className="bg-white rounded-xl shadow flex flex-col p-0 overflow-hidden relative"
+                        className={cardBase}
                         style={{
                             background:
                                 "radial-gradient(circle, #f8f8fa 80%, #f0f0f5 100%)",
@@ -207,22 +264,22 @@ const NosServices = () => {
                             />
                         </svg>
                         {/* Cercles et images en haut */}
-                        <div className="flex justify-center items-start gap-16 pt-8 pb-2 relative z-10">
+                        <div className="flex justify-center items-start gap-16 pt-6 pb-2 relative z-10">
                             <div className="flex flex-col items-center">
-                                <div className="rounded-full bg-white shadow-md flex items-center justify-center w-32 h-32 mb-2">
+                                <div className="rounded-full bg-white shadow-md flex items-center justify-center w-24 h-24 mb-2">
                                     <img
                                         src="/jeton.png"
                                         alt="Jeton"
-                                        className="h-20 w-20"
+                                        className="h-16 w-16"
                                     />
                                 </div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <div className="rounded-full bg-white shadow-md flex items-center justify-center w-32 h-32 mb-2">
+                                <div className="rounded-full bg-white shadow-md flex items-center justify-center w-24 h-24 mb-2">
                                     <img
                                         src="/sans-contact.png"
                                         alt="Sans contact"
-                                        className="h-20 w-20"
+                                        className="h-16 w-16"
                                     />
                                 </div>
                             </div>
@@ -231,34 +288,34 @@ const NosServices = () => {
                         <svg
                             className="absolute left-0 right-0 mx-auto"
                             style={{
-                                top: "140px",
+                                top: "110px",
                                 zIndex: 5,
                                 width: "100%",
-                                height: "60px",
+                                height: "40px",
                                 pointerEvents: "none",
                             }}
                             width="100%"
-                            height="60"
+                            height="40"
                         >
                             <path
-                                d="M 25 10 Q 200 60 400 10"
+                                d="M 25 10 Q 200 40 400 10"
                                 stroke="#bfc6e6"
                                 strokeWidth="2"
                                 fill="none"
                             />
                             <path
-                                d="M 375 10 Q 500 60 700 10"
+                                d="M 375 10 Q 500 40 700 10"
                                 stroke="#bfc6e6"
                                 strokeWidth="2"
                                 fill="none"
                             />
                         </svg>
-                        {/* Bloc texte */}
-                        <div className="bg-white p-8 rounded-b-xl flex flex-col gap-4 relative z-10">
+                        {/* Bloc texte en bas */}
+                        <div className={cardTextBlock + " mt-2"}>
                             <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">
                                 CHOISISSEZ COMMENT DÉBLOQUER LES INFOS CLIENTS
                             </h3>
-                            <p className="text-gray-600 text-center mb-4">
+                            <p className="text-gray-600 text-center mb-2">
                                 Abonnement ou jetons : vous avez le choix pour
                                 accéder aux détails des clients et proposer vos
                                 services.
