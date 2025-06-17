@@ -13,6 +13,7 @@ import ErrorPage from "../pages/ErrorPage";
 import Home from "../pages/Home";
 import LoginForm from "../pages/LoginForm";
 import MentionsLegales from "../pages/MentionsLegales";
+import NosServices from "../pages/NosServices";
 import NotFound from "../pages/NotFound";
 import SignUpForm from "../pages/SignUpForm";
 import DashboardRouter from "../router/DashboardRoot";
@@ -131,6 +132,9 @@ function Root() {
 
             {/* Route spécifique pour 404 */}
             <Route path="/404" element={<NotFound />} />
+
+            {/* Route pour les services */}
+            <Route path="/services" element={<NosServices />} />
 
             {/* Route catch-all pour les pages non trouvées - doit être en dernier */}
             <Route path="*" element={<NotFound />} />
