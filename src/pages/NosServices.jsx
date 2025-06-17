@@ -112,31 +112,60 @@ const NosServices = () => {
                         </p>
                         <Link
                             to="#"
-                            className="inline-block px-6 py-2 rounded-md bg-indigo-200 text-indigo-800 font-medium text-sm text-center"
+                            className="inline-block px-0 py-0 rounded-none bg-transparent text-[#7B7BC2] font-semibold text-base hover:underline shadow-none transition"
                         >
                             EN SAVOIR PLUS
                         </Link>
                     </div>
-                    {/* Booster profil/offres */}
-                    <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center">
-                        <img
-                            src="/radar.png"
-                            alt="Radar"
-                            className="h-32 mb-4"
-                        />
-                        <h3 className="text-lg font-semibold mb-2 text-center">
-                            BOOSTEZ VOTRE PROFIL OU VOS OFFRES
-                        </h3>
-                        <p className="text-gray-600 text-center mb-4">
-                            Gagnez en visibilité localement, nationalement ou à
-                            l'international grâce à nos boosters et jetons.
-                        </p>
-                        <Link
-                            to="#"
-                            className="inline-block px-6 py-2 rounded-md bg-indigo-200 text-indigo-800 font-medium text-sm text-center"
-                        >
-                            EN SAVOIR PLUS
-                        </Link>
+                    {/* Booster profil/offres - Adaptée à la maquette */}
+                    <div className="bg-white rounded-xl shadow flex flex-col p-0 overflow-hidden relative">
+                        <div className="p-8 pb-0 flex flex-col gap-2">
+                            <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">
+                                BOOSTEZ VOTRE PROFIL OU VOS OFFRES
+                            </h3>
+                            <p className="text-gray-600 text-center mb-4">
+                                Gagnez en visibilité localement, nationalement
+                                ou à l'international grâce à nos boosters et
+                                jetons.
+                            </p>
+                        </div>
+                        {/* Radar + avatars */}
+                        <div className="relative flex justify-center items-end h-64 mt-2 mb-2">
+                            <img
+                                src="/radar.png"
+                                alt="Radar"
+                                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] max-w-xs"
+                            />
+                            {/* Avatars positionnés */}
+                            <img
+                                src="/personne2.png"
+                                alt="Personne 2"
+                                className="absolute left-[18%] bottom-[55%] w-14 h-14 rounded-full border-4 border-white shadow-md"
+                            />
+                            <img
+                                src="/real-estate.png"
+                                alt="Real Estate"
+                                className="absolute left-[35%] bottom-[30%] w-20 h-20 rounded-full border-4 border-white shadow-md"
+                            />
+                            <img
+                                src="/personne-pp.png"
+                                alt="Personne PP"
+                                className="absolute left-[60%] bottom-[60%] w-14 h-14 rounded-full border-4 border-white shadow-md"
+                            />
+                            <img
+                                src="/mds.png"
+                                alt="MDS"
+                                className="absolute left-[70%] bottom-[35%] w-16 h-16 rounded-full border-4 border-white shadow-md"
+                            />
+                        </div>
+                        <div className="flex justify-center pb-6">
+                            <Link
+                                to="#"
+                                className="inline-block px-0 py-0 rounded-none bg-transparent text-[#7B7BC2] font-semibold text-base hover:underline shadow-none transition"
+                            >
+                                EN SAVOIR PLUS
+                            </Link>
+                        </div>
                     </div>
                     {/* Déblocage infos clients - Adaptée à la maquette */}
                     <div
@@ -224,8 +253,6 @@ const NosServices = () => {
                                 fill="none"
                             />
                         </svg>
-                        {/* Carte mission stylisée (image ou placeholder) */}
-
                         {/* Bloc texte */}
                         <div className="bg-white p-8 rounded-b-xl flex flex-col gap-4 relative z-10">
                             <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">
