@@ -15,6 +15,7 @@ import LoginForm from "../pages/LoginForm";
 import MentionsLegales from "../pages/MentionsLegales";
 import NosServices from "../pages/NosServices";
 import NotFound from "../pages/NotFound";
+import NotreBlog from "../pages/NotreBlog";
 import SignUpForm from "../pages/SignUpForm";
 import DashboardRouter from "../router/DashboardRoot";
 
@@ -135,6 +136,9 @@ function Root() {
 
             {/* Route pour les services */}
             <Route path="/services" element={<NosServices />} />
+
+            {/* Route pour le blog */}
+            <Route path="/blog" element={<NotreBlog />} />
 
             {/* Route catch-all pour les pages non trouvées - doit être en dernier */}
             <Route path="*" element={<NotFound />} />
