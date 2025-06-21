@@ -54,12 +54,14 @@ function Nav() {
                                     >
                                         Nos Services
                                     </Link>
+                                    {/*
                                     <Link
                                         to="/missions"
                                         className="px-4 py-2 rounded-full text-gray-700 hover:bg-white hover:shadow-sm transition-all duration-200 text-sm font-medium"
                                     >
                                         Les Missions
                                     </Link>
+                                    */}
                                     <Link
                                         to="/blog"
                                         className="px-4 py-2 rounded-full text-gray-700 hover:bg-white hover:shadow-sm transition-all duration-200 text-sm font-medium"

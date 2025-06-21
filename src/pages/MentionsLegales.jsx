@@ -13,8 +13,7 @@ function MentionsLegales() {
                         </h2>
                         <p className="text-gray-600 leading-relaxed mb-4">
                             Le présent site web, accessible à l'adresse
-                            www.jobyfind.com (ou URL temporaire du projet), est
-                            édité par :
+                            www.jobyfind-frontend.vercel.app , est édité par :
                         </p>
                         <div className="bg-gray-50 p-4 rounded-lg">
                             <ul className="text-gray-600 space-y-2">
@@ -48,11 +47,11 @@ function MentionsLegales() {
                                     <strong>
                                         Responsable de la publication :
                                     </strong>{" "}
-                                    Liebaert Thibault / CEO
+                                    Alistair PIOT / Développeur
                                 </li>
                                 <li>
                                     <strong>Email de contact :</strong>{" "}
-                                    [contact@jobyfind.com]
+                                    [contact@jobyfind-frontend-exemple.com]
                                 </li>
                             </ul>
                         </div>
@@ -68,28 +67,28 @@ function MentionsLegales() {
                         <div className="bg-gray-50 p-4 rounded-lg">
                             <ul className="text-gray-600 space-y-2">
                                 <li>
-                                    <strong>Hébergeur principal :</strong> Ionos
+                                    <strong>Hébergeur principal :</strong>{" "}
+                                    Vercel
                                 </li>
                                 <li>
-                                    <strong>Adresse :</strong> 304 chemin de
-                                    traverse, Paris
+                                    <strong>Adresse :</strong> 111 chemin de
+                                    traverse, Saturne
                                 </li>
                                 <li>
-                                    <strong>Render :</strong> 100 Pine Street,
-                                    Suite 1250, San Francisco, CA 94111,
-                                    États-Unis
+                                    <strong>Fly.io :</strong> 111 chemin de
+                                    traverse, Saturne
                                 </li>
                                 <li>
-                                    <strong>Vercel :</strong> 340 S Lemon Ave
-                                    #4133, Walnut, CA 91789, États-Unis
+                                    <strong>Railway :</strong> 111 chemin de
+                                    traverse, Saturne
                                 </li>
                                 <li>
                                     <strong>Site web :</strong>{" "}
                                     <a
-                                        href="https://www.ionos.fr"
+                                        href="https://vercel.com"
                                         className="text-primary hover:underline"
                                     >
-                                        https://www.ionos.fr
+                                        https://vercel.com
                                     </a>
                                 </li>
                             </ul>
@@ -102,12 +101,13 @@ function MentionsLegales() {
                         </h2>
                         <ul className="list-disc list-inside text-gray-600 space-y-2">
                             <li>
-                                <strong>Développement web et mobile :</strong>{" "}
-                                Équipe interne JobyFind
+                                <strong>Développement web :</strong> Équipe
+                                interne JobyFind
                             </li>
                             <li>
                                 <strong>Technologies utilisées :</strong> React,
-                                Symfony, MySQL, Firebase, Stripe
+                                Symfony, MySQL, Tailwind CSS, Stripe, Vercel,
+                                Fly.io, Railway
                             </li>
                         </ul>
                     </section>
