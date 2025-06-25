@@ -183,13 +183,6 @@ function Nav() {
                                         Nos Services
                                     </Link>
                                     <Link
-                                        to="/missions"
-                                        onClick={closeMobileMenu}
-                                        className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-base font-medium"
-                                    >
-                                        Les Missions
-                                    </Link>
-                                    <Link
                                         to="/blog"
                                         onClick={closeMobileMenu}
                                         className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-base font-medium"
